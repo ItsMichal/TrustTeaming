@@ -1,0 +1,6 @@
+six
+flask
+redis
+rom
+flask-classful
+flask-socketio
