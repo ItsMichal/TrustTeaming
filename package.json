@@ -1,0 +1,27 @@
+{
+  "name": "trust-teaming",
+  "version": "1.0.0",
+  "description": "Trust teaming testbed for SHINE Lab experiment",
+  "main": "src/app.py",
+  "scripts": {
+    "start": "cd src;python3 app.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ItsMichal/TrustTeaming.git"
+  },
+  "author": "Michal Bodzianowski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ItsMichal/TrustTeaming/issues"
+  },
+  "homepage": "https://github.com/ItsMichal/TrustTeaming#readme",
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.4",
+    "@babel/preset-react": "^7.16.0",
+    "babel-loader": "^8.2.3",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
+  }
+}

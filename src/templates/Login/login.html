@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <title>Login</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+        <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div class="m-10 background-gray">
+            <div class="text-3xl">Login</div>
+            <br>
+            <p>Code</p>
+            <input class="border-black border-2 rounded-xl p-2" id="code" type="number"></input>
+            <br>
+            <p>User ID</p>
+            <input class="border-black border-2 rounded-xl p-2" id="pass" type="number"></input>
+            <br>
+            <button class="bg-black rounded-xl text-white p-2 mt-5" id="submit">Submit</button>
+            <br>
+            <div id="errormsg" class="text-red-500 text-xl"></div>
+        </div>
+        <script src="static/login.js"></script>
+    </body>
+</html>
