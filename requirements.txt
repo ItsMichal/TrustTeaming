@@ -4,3 +4,4 @@ redis
 rom
 flask-classful
 flask-socketio
+flask-login

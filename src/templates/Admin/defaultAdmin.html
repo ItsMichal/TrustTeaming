@@ -6,7 +6,20 @@
         <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
         <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script>
     </head>
-    <body>
+    <body class="bg-gray-300 flex flex-col  content-center items-center">
+        <div class="self-center container p-20 mt-20 rounded-2xl bg-gray-100">
+            <h1 class="text-3xl">Admin Page</h1>
+            <div class="text-xl">
+                Welcome to the Admin Site.
+            </div>
+            <br>
+            <!-- TODO: Add Realtime experiment data here -->
+            <a href="/admin/csvFileUpload">
+                <button class="bg-black text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">
+                    Upload Config
+                </button>
+            </a>
+        </div>
         
     </body>
 </html>

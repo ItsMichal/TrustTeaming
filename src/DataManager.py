@@ -5,14 +5,22 @@ from dataModels.Experiment import ExperimentConfig
 from dataModels.Config import RoundConfig
 import datetime
 
-class DataManager():
-    def __init__(self):
-        util.set_connection_settings(host="127.0.0.1", db=1)
-        # DataManager.createExperimentConfig(1,repr(2134))
-        # self.createRoundConfig(2, 1, 2, ['testlayer', 'testlayer2'], 'Who is the barnacle?', 120, datetime.datetime.now(), 8,8)
-        print(self.getExperimentConfig(1))
-        print(self.getRoundConfig(2,1,2))
-        print(self.getRoundConfig(2,1,1))
+# Singleton Data Mgr class
+# https://python-patterns.guide/gang-of-four/singleton/
+
+class DataManager(object):
+    _instance = None
+    def __new__(self):
+        if self._instance is None:
+            print("Creating Experiment Config")
+            self._instance = super(DataManager, self).__new__(self)
+            util.set_connection_settings(host="127.0.0.1", db=1)
+            # DataManager.createExperimentConfig(1,repr(2134))
+            # self.createRoundConfig(2, 1, 2, ['testlayer', 'testlayer2'], 'Who is the barnacle?', 120, datetime.datetime.now(), 8,8)
+            print(self._instance.getExperimentConfig(1))
+            print(self._instance.getRoundConfig(2,1,2))
+            print(self._instance.getRoundConfig(2,1,1))
+        return self._instance
 
 
     def createRoundConfig(self, user_id, experiment_id, round_id, layers, question, time, target_date, max_red, max_green):
