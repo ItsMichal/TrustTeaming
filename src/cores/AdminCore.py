@@ -28,4 +28,4 @@ class AdminCore(object):
 
     @admin_bp.route('/configUpload', methods=['POST'])
     def configUpload():
-
+        return redirect(url_for('admin.index'))
