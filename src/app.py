@@ -1,25 +1,30 @@
 from flask import Flask
+from DataManager import DataManager
 from auth.AuthCore import AuthCore
 from cores import AdminCore, LoginCore
 from flask_socketio import SocketIO, Namespace
 
+# Eventually convert this to class to be called by TrustTeaming.py
+
 # Initialize Flask
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!ilovejam'
+app.config['JWT_SECRET_KEY'] = "laughinggoat"
+
 socketio = SocketIO(app)
+authCore = AuthCore()
 
-authCore = AuthCore(app)
+dataManager = DataManager()
 
-loginCore = LoginCore(authCore,'/loginSocket')
-loginCore.register(app, route_base='/')
+adminCore = AdminCore()
+app.register_blueprint(adminCore.admin_bp)
 
-adminCore = AdminCore(authCore,'/adminSocket')
-adminCore.register(app, route_base='/admin')
-socketio.on_namespace(loginCore)
+loginCore = LoginCore()
+app.register_blueprint(loginCore.login_bp)
 
 # For eventual call from trustteaming
 def startWebserver():
     socketio.run(app)
 
 if __name__ == '__main__':
-    socketio.run(app, port=8080)
+    socketio.run(app, port=8080, debug=True, use_reloader=True)

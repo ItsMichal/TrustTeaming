@@ -1,4 +1,4 @@
 from flask import render_template
 
-def LoginPage():
-    return render_template("Login/login.html")
+def LoginPage(errorMsg):
+    return render_template("Login/login.html", errorMsg=errorMsg)

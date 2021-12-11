@@ -8,17 +8,21 @@
     </head>
     <body>
         <div class="m-10 background-gray">
-            <div class="text-3xl">Login</div>
+            <div class="text-3xl">Login v1</div>
             <br>
-            <p>Code</p>
-            <input class="border-black border-2 rounded-xl p-2" id="code" type="text"></input>
-            <br>
-            <p>User ID</p>
-            <input class="border-black border-2 rounded-xl p-2" id="pass" type="number"></input>
-            <br>
-            <button class="bg-black rounded-xl text-white p-2 mt-5" id="submit">Submit</button>
-            <br>
-            <div id="errormsg" class="text-red-500 text-xl"></div>
+            <form action="/login" method="post">
+                <p>Code</p>
+                <input class="border-black border-2 rounded-xl p-2" id="code" name="code" type="text"></input>
+                <br>
+                <p>User ID</p>
+                <input class="border-black border-2 rounded-xl p-2" id="pass"  name="user_id" type="number"></input>
+                <br>
+                <input type="submit" class="bg-black rounded-xl text-white p-2 mt-5" name="submit" id="submit"></input>
+                <br>
+
+            </form>
+            
+            <div id="errormsg" class="text-red-500 text-xl">{{errorMsg}}</div>
         </div>
         <script src="static/dist/login.js"></script>
     </body>

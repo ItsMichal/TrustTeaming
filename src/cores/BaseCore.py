@@ -11,12 +11,18 @@ from auth import AuthCore
 from flask_socketio import  Namespace
 from abc import ABC
 
-class BaseCore(ABC, FlaskView, Namespace):
-    authCore = None
-    dataMgr = None
+#Deprec
+# class BaseCore(ABC, FlaskView, Namespace):
+#     authCore = None
+#     dataMgr = None
 
-    def __init__(self, authCore=None, namespace=""):
-        super().__init__(namespace=namespace)
-        self.dataMgr = DataManager()
-        self.authCore = authCore
+#     def __init__(self, options):
+#         FlaskView.__init__(self)
+        
+#         if 'namespace' in options:
+#             print(options.get('namespace', ''))
+
+#             Namespace.__init__(self, namespace=options.get('namespace', ''))
+#         self.dataMgr = DataManager()
+#         self.authCore = options['authCore']
         
