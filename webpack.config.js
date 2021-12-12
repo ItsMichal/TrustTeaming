@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const config = {
+    mode: "development",
     entry:  {
         login: __dirname + '/src/webScripts/login.js',
     

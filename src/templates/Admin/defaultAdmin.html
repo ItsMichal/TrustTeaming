@@ -8,17 +8,28 @@
     </head>
     <body class="bg-gray-300 flex flex-col  content-center items-center">
         <div class="self-center container p-20 mt-20 rounded-2xl bg-gray-100">
-            <h1 class="text-3xl">Admin Page</h1>
+            <div class="flex flex-row">
+                <h1 class="text-3xl pr-10">Admin Page </h1>
+                <form class="flex" action="logout" method="post">
+                    <input type="submit" class="bg-red-600 text-white active:bg-pink-600 text-sm px-3 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" value="Log Out">
+                </form>
+            </div>
+            
+            
+
             <div class="text-xl">
-                Welcome to the Admin Site.
+                Welcome to the Admin Site. {{cur_user}} 
             </div>
             <br>
             <!-- TODO: Add Realtime experiment data here -->
-            <a href="/admin/csvFileUpload">
-                <button class="bg-black text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">
-                    Upload Config
-                </button>
-            </a>
+            <form action="config">
+                <input type="file" id="config" name="config" accept="text/csv">
+
+                <input class="bg-black text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"  type="submit"> 
+                
+            </form>
+                Upload Config
+            </button>
         </div>
         
     </body>

@@ -1,7 +1,12 @@
 from flask_login import UserMixin
 
-class AuthUser(UserMixin):
+class AuthUser(object):
     id = None
     cur_code = ""
-    def __init__(self, id):
-        self.id = id
+    auth = False
+
+    def __init__(self, user_id, cur_code="", auth=False):
+        super().__init__()
+        self.id = user_id
+        self.auth = auth
+        self.cur_code = cur_code
