@@ -3,13 +3,13 @@
         <title>Admin Portal</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+        <script src="https://cdn.tailwindcss.com/"></script>
         <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script>
     </head>
     <body class="bg-gray-300 flex flex-col  content-center items-center">
         <div class="self-center container p-20 mt-20 rounded-2xl bg-gray-100">
             <div class="flex flex-row">
-                <h1 class="text-3xl pr-10">Admin Page </h1>
+                <h1 class="text-3xl pr-10 font-extrabold">Admin Page </h1>
                 <form class="flex" action="logout" method="post">
                     <input type="submit" class="bg-red-600 text-white active:bg-pink-600 text-sm px-3 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" value="Log Out">
                 </form>
@@ -17,19 +17,48 @@
             
             
 
-            <div class="text-xl">
+            <div class="text-xl border-b-2 pb-5 pt-5 border-t-2">
                 Welcome to the Admin Site. {{cur_user}} 
             </div>
             <br>
             <!-- TODO: Add Realtime experiment data here -->
-            <form action="config">
+            <form action="configUpload" method="post" enctype="multipart/form-data">
+                <h1 class="text-2xl pt-2 pb-5 font-bold">New Config Upload</h1>
+                <!-- https://www.tailwind-kit.com/components/inputtext -->
+                <div class=" relative pb-10">
+                    <label for="required-code" class="text-gray-700">
+                        Code
+                        <span class="text-red-500 required-dot">
+                            *
+                        </span>
+                    </label>
+                    <input type="text" id="required-code" class=" rounded-lg border-transparent appearance-none border border-gray-300  py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent" name="code" placeholder="Max. 10 Characters"/>
+                    <label for="forceBox" class="ml-10 text-gray-700">
+                        Force?
+                        <span class="text-red-500 required-dot">
+                            *
+                        </span>
+                    </label>
+                    <input type="checkbox" class="p-10" id="forceBox" name="force">
+
+                </div>
+
+                <label for="config" class="text-gray-700">
+                    CSV File<span class="text-red-500 required-dot">
+                        *
+                    </span>
+                </label>
+                <br>
                 <input type="file" id="config" name="config" accept="text/csv">
 
-                <input class="bg-black text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"  type="submit"> 
+                
+                <input class="bg-black text-white active:bg-pink-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" value="Upload Config"  type="submit"> 
                 
             </form>
-                Upload Config
-            </button>
+            
+            <div class="text-red-500 ">{{config_msg}}</div>
+            <div id="configView" class="container p-0"></div>
+            <script src="/static/dist/adminViewConfig.js"></script>
         </div>
         
     </body>
