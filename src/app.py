@@ -4,13 +4,13 @@ from auth.AuthCore import AuthCore
 from cores import AdminCore, LoginCore
 from flask_socketio import SocketIO, Namespace
 
+from cores.ExperimentCore import ExperimentCore
+
 # Eventually convert this to class to be called by TrustTeaming.py
 
 # Initialize Flask
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!ilovejam'
-app.config['JWT_SECRET_KEY'] = "laughinggoat"
-app.config['UPLOAD_FOLDER'] = 'temp'
+app.config['SECRET_KEY'] = 'shinelabnotverysecret'
 
 socketio = SocketIO(app)
 authCore = AuthCore()
@@ -23,7 +23,8 @@ app.register_blueprint(adminCore.admin_bp)
 loginCore = LoginCore()
 app.register_blueprint(loginCore.login_bp)
 
-print(app.url_map)
+experimentCore = ExperimentCore()
+app.register_blueprint(experimentCore.experiment_bp)
 
 # For eventual call from trustteaming
 def startWebserver():

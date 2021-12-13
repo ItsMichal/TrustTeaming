@@ -22,6 +22,11 @@ class LoginCore(object):
         if('errorMsg' in session and session['errorMsg'] != ""):
             message = session['errorMsg']
         session['errorMsg'] = ""
+        user = AuthCore.get_user()
+        if(user is not None):
+            return LoginView.LoginPage(errorMsg=message, logged_in=True,
+                                            user_id=user.id, code=user.cur_code)
+
         return LoginView.LoginPage(message)
     
     @login_bp.route('/login', methods=['POST'])    
@@ -49,7 +54,7 @@ class LoginCore(object):
 
         if("SHINE" in code):
             #Redir to admin portal
-            AuthCore.login_user(code=code, user_id=user_id)
+            AuthCore().login_user(code=code, user_id=user_id)
             return redirect(url_for('admin.index'))
         else:
             #Check against redis for configs
@@ -61,7 +66,6 @@ class LoginCore(object):
 
             
         
-        # Error
-        session['errorMsg'] = 'Damn bro u fucked up on god 🥺💕'
+        AuthCore().login_user(code=code, user_id=user_id)
 
         return redirect(url_for('login.index'))

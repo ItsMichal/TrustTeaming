@@ -28,7 +28,7 @@ class AdminCore(object):
     def index():
         return AdminCore.adminPortal()
 
-    @admin_bp.route('/logout', methods=['POST'])
+    @admin_bp.route('/logout', methods=['GET','POST'])
     def logout():
         AuthCore.logout_user()
         return redirect(url_for("login.index"))

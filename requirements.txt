@@ -3,4 +3,3 @@ flask
 redis
 rom
 flask-socketio
-flask-jwt-extended

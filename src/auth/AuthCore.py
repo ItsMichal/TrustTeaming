@@ -5,7 +5,7 @@ from werkzeug.utils import redirect
 
 from auth.AuthUser import AuthUser
 #Singleton AuthCore
-class AuthCore():
+class AuthCore(object):
     # jwt_inst = JWTManager()
     _instance = None
     
@@ -15,7 +15,8 @@ class AuthCore():
             self._instance = super(AuthCore, self).__new__(self)
         return self._instance
 
-    def login_user(code, user_id):
+    def login_user(self, code, user_id):
+        #TODO - Need to keep track of users logged in to prevent dupes
         session['code'] = code
         session['user_id'] = user_id
         if code == "SHINE":
@@ -29,14 +30,28 @@ class AuthCore():
         else:
             return None
 
+    # Log out the user
     def logout_user():
         session.clear()
- 
+    
+    
     def require_admin(func):
         def route(*args, **kwargs):
             # print(AuthCore.get_user())
             if(AuthCore.get_user() is None or not AuthCore.get_user().auth):
-                session['errorMsg'] = "Unauthorized!"
+                session['errorMsg'] = "Unauthorized! For admins only - Please log in."
+                return redirect(url_for("login.index"))
+            else:
+                return func(*args, **kwargs)
+            
+        return route  
+
+    #Decorator to require login
+    def require_login(func):
+        def route(*args, **kwargs):
+            # print(AuthCore.get_user())
+            if(AuthCore.get_user() is None):
+                session['errorMsg'] = "Please log in first!"
                 return redirect(url_for("login.index"))
             else:
                 return func(*args, **kwargs)
