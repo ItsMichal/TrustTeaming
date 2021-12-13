@@ -1,5 +1,7 @@
 # Trust Teaming (WIP)
 
+[Video Link for Project 7](https://youtu.be/FspU1g7ndOk)
+
 ## About 
 This webapp is the newly improved testbed for the Trust Teaming experiment conducted at the [SHINE Lab](https://shinelaboratory.com). Also the final project of [Michal Bodzianowski](https://michal.us) for the CSCI5448 - Object Oriented Analysis and Design class at CU Boulder
 
