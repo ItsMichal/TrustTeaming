@@ -44,6 +44,9 @@ class AdminCore(object):
             session['configMsg'] = "Please enter a code for this config!"
             return redirect(url_for('admin.index'))
 
+        if code == "SHINE":
+            session['configMsg'] = "Cannot set 'secret' admin code as experiment code!"
+            return redirect(url_for('admin.index'))
 
         if DataManager().getExperimentByCode(code) is not None and not force:
             session['configMsg'] = "Code is already in use! Choose a different code."
