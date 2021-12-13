@@ -3,15 +3,9 @@ const config = {
     mode: "development",
     entry:  {
         login: __dirname + '/src/webScripts/login.js',
-    
+        adminViewConfig: __dirname + '/src/webScripts/adminViewConfigs.jsx'
     },    
-    output: {
-        path: __dirname + '/src/static/dist',
-        filename: '[name].js',
-    },
-    resolve: {
-        extensions: ['.js', '.jsx', '.css']
-    },
+   
   
     module: {
         rules: [
@@ -21,6 +15,13 @@ const config = {
                 use: 'babel-loader'     
             }        
         ]
-    }
+    },
+    resolve: {
+        extensions: ['.js', '.jsx', '.css']
+    },
+    output: {
+        path: __dirname + '/src/static/dist',
+        filename: '[name].js',
+    },
 };
 module.exports = config;

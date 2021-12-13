@@ -34,7 +34,7 @@ class AuthCore():
  
     def require_admin(func):
         def route(*args, **kwargs):
-            print(AuthCore.get_user())
+            # print(AuthCore.get_user())
             if(AuthCore.get_user() is None or not AuthCore.get_user().auth):
                 session['errorMsg'] = "Unauthorized!"
                 return redirect(url_for("login.index"))
