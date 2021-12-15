@@ -4,7 +4,7 @@ from flask_socketio import SocketIO, Namespace
 
 # Initialize Flask
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!ilovejam'
+app.config['SECRET_KEY'] = 'dataiscoool'
 socketio = SocketIO(app)
 
 loginCore = LoginCoreFV('/loginSocket')
@@ -16,4 +16,4 @@ def startWebserver():
     socketio.run(app)
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, port="8080")
