@@ -22,3 +22,7 @@ This webapp is the newly improved testbed for the Trust Teaming experiment condu
 
 ## Libraries used
 - See `requirements.txt` and `package.json`
+
+## Note about `crime.csv`
+
+Please download this seperately, and put under `data/`.
