@@ -6,16 +6,21 @@
         <script src="https://cdn.tailwindcss.com/"></script>
         <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script>
     </head>
-    <body class="bg-gray-300 flex flex-col  content-center items-center" >
-        <div class="self-center container p-20 mt-20 rounded-2xl bg-gray-100">
-            <div class="text-3xl">Welcome to Trust Teaming <small class="uppercase text-sm text-gray-400">Beta v2021.12</small></div>
-            <div class="text-2xl font-light">Please choose a view, user {{user_id}}</div>
-            <br>
-            <a href={{url_for("trust.crime.index")}}>
-                <button class="button p-2 bg-blue-500">Crime</button>
-            </a>
-            
-            <div id="errormsg" class="text-red-500 text-xl">{{errorMsg}}</div>
-        </div>
+    <body class="bg-gray-300 grid grid-cols-12 gap-4 content-center items-center" >
+       {# Sidebar #}
+       <div class="col-span-3 h-screen bg-gray-300 w-100 border-r border-black flex flex-1 flex-col">
+            {# Switcher Bar at Top #}
+            <div class="w-100 flex flex-row">
+                <button class="flex-grow bg-gray-500 py-3 border border-black border-b-0 rounded-tr-lg">Crime</button>
+                <button class="bg-gray-300 flex-grow py-3 rounded-tl-lg border-b border-black">Shared</button>
+            </div>
+            {# Main Sidebar Content #}
+            <div class="bg-gray-500 flex-grow border-l border-b border-black">
+            </div>
+       </div>
+       {# Right Side #}
+       <div class="col-span-9 h-screen">
+            Map
+       </div>
     </body>
 </html>
