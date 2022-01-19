@@ -22,7 +22,7 @@ def csvToDataModel(file : FileStorage, code : str, force : bool = False):
 
     for row in csvConfigReader:
         #Check validity
-        if len(row) is not 8:
+        if len(row) != 8:
             raise(BaseException("Wrong CSV format!"))
 
 

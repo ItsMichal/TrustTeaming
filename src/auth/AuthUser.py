@@ -1,5 +1,3 @@
-from flask_login import UserMixin
-
 class AuthUser(object):
     id = None
     cur_code = ""

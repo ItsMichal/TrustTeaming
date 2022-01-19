@@ -19,6 +19,7 @@ This webapp is the newly improved testbed for the Trust Teaming experiment condu
 8. Visit http://127.0.0.1:5000 on participant computers. Admin login is done by entering `SHINE` as the code. 
 
 **Warning**- Do not trust sensitive data to this program. This is out of scope for this testbed's responsibilities.
+**Note**- If using `npm` on Windows, please run `npm config set script-shell bash` so that the start script runs correctly
 
 ## Libraries used
 - See `requirements.txt` and `package.json`

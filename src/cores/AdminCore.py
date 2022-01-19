@@ -1,6 +1,5 @@
 import sys
 from flask.helpers import url_for
-from flask_classful import FlaskView, method, route
 from flask import Blueprint, session
 from flask import request
 from werkzeug.utils import redirect
@@ -56,13 +55,14 @@ class AdminCore(object):
             session['configMsg'] = "Code is greater than 10 characters!"
             return redirect(url_for('admin.index'))
 
+        print(csvConfig)
 
         if csvConfig is None or csvConfig.content_type == "application/octet-stream":
             session['configMsg'] = "No file received by server!"
             return redirect(url_for('admin.index'))
 
-        if csvConfig.content_type != "text/csv":
-            session['configMsg'] = "Not a valid CSV file!"
+        if csvConfig.content_type != "text/csv" and csvConfig.content_type != "application/vnd.ms-excel":
+            session['configMsg'] = "Not a valid CSV file! (Also check Redis server)"
             return redirect(url_for('admin.index'))
         
         try:

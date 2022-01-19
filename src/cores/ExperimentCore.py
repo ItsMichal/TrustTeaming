@@ -1,6 +1,5 @@
 import sys
 from flask.helpers import url_for
-from flask_classful import FlaskView, method, route
 from flask import Blueprint, session
 from flask import request
 from werkzeug.utils import redirect

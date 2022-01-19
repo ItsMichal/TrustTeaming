@@ -4,7 +4,7 @@
   "description": "Trust teaming testbed for SHINE Lab experiment",
   "main": "src/app.py",
   "scripts": {
-    "start": "cd src;python3 app.py",
+    "start": "cd src && py -3 app.py",
     "build": "webpack --progress --config webpack.config.js",
     "dev-build": "webpack --progress -d --config webpack.config.js",
     "dev-watch": "webpack --progress --config webpack.config.js --watch -d source-map"
