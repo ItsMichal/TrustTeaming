@@ -36,15 +36,22 @@ class LoginCore(object):
         
         user_id = request.form.get('user_id', None)
 
-        if(user_id is '' or user_id is None):
+        if(user_id == '' or user_id is None):
             session['errorMsg'] = 'Must enter User ID'
             return redirect(url_for('login.index'))
-            
-        if(len(user_id) > 10):
-            session['errorMsg'] = 'Invalid User ID- greater than 10 characters'
+        
+        #Make sure user_id is numeric
+        try:
+            int(user_id)
+        except ValueError:
+            session['errorMsg'] = 'Invalid User ID- not an Integer'
+            return redirect(url_for('login.index'))
+
+        if(len(user_id) > 4):
+            session['errorMsg'] = 'Invalid User ID- greater than 9999'
             return redirect(url_for('login.index'))
             
-        if(code is '' or code is None):
+        if(code == '' or code is None):
             session['errorMsg'] = 'Must enter Code'
             return redirect(url_for('login.index'))
 
@@ -64,6 +71,10 @@ class LoginCore(object):
                 session['errorMsg'] = "Code not found in configuration."
                 return redirect(url_for('login.index'))
 
+            #Check that User ID is defined in conf
+            if(int(user_id) not in expCfg.valid_uids):
+                session['errorMsg'] = "User ID is not valid for " + code + "'s setup. Please try again."
+                return redirect(url_for("login.index"))
             
         
         AuthCore().login_user(code=code, user_id=user_id)
