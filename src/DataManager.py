@@ -2,8 +2,8 @@ import json
 import redis
 
 from rom import util
-from dataModels.Experiment import ExperimentConfig
-from dataModels.Config import RoundConfig
+from dataModels.ExperimentConfig import ExperimentConfig
+from dataModels.RoundConfig import RoundConfig
 import datetime
 
 # Singleton Data Mgr class

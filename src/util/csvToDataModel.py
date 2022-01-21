@@ -5,7 +5,7 @@ from werkzeug.datastructures import FileStorage
 import io
 from DataManager import DataManager
 
-from dataModels.Config import RoundConfig
+from dataModels.RoundConfig import RoundConfig
 
 def csvToDataModel(file : FileStorage, code : str, force : bool = False):
     print("really?")
