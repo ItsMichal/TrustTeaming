@@ -1,3 +1,4 @@
+from os import name
 import sys
 from flask.helpers import url_for
 from flask import Blueprint, session
@@ -9,6 +10,8 @@ sys.path.append("..") #python bs
 from views import AdminView
 from auth import AuthCore
 from util.csvToDataModel import csvToDataModel
+from TrustTeaming import socketio
+from flask_socketio import emit
 
 #FlaskView is actually a controller :)
 class AdminCore(object):
@@ -78,3 +81,11 @@ class AdminCore(object):
     def getConfig():
         return DataManager().getExperimentsJSON()
         # return redirect(url_for("admin.index"))
+
+    @socketio.on('requestLive', namespace=route_base)
+    def liveRequest(req):
+        emit('liveexp', DataManager().getExperimentByCode(AuthCore.cur_code()))
+
+    @socketio.on('echo', namespace='/admin')
+    def testCmd(req):
+        emit('echo', 'Pong!')

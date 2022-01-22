@@ -4,6 +4,7 @@ import redis
 from rom import util
 from dataModels.ExperimentConfig import ExperimentConfig
 from dataModels.RoundConfig import RoundConfig
+from dataModels.LiveExperiment import LiveExperiment
 import datetime
 
 # Singleton Data Mgr class
@@ -54,15 +55,6 @@ class DataManager(object):
             print(err)
             raise err
     
-    # Deprec
-    # def getExperimentById(self, given_experiment_id):
-    #     try:
-    #         getExperimentCfg = ExperimentConfig.query.filter(experiment_id=given_experiment_id).first()
-    #         return getExperimentCfg
-    #     except BaseException as err:
-    #         print(err)
-    #         return None
-    
     def getExperimentByCode(self, code) -> ExperimentConfig:
         try:
             getExperimentRelatedToCode = ExperimentConfig.get_by(code=code.encode())
@@ -95,6 +87,36 @@ class DataManager(object):
 
         print(returnJson)
         return returnJson
+
+
+    # Stops an experiment by deleting it
+    # TODO- add save feature once logging implemented
+    def stopExperiment(self, code):
+        target_exp = self.getExperimentByCode(code)
+        target_exp.live_experiment.delete()
+        target_exp.save(force=True)
+
+
+    # Initialize the Live Experiment based on an Experiment Config (via its code)
+    def initializeExperiment(self, code, force=False):
+        target_exp = self.getExperimentByCode(code)
+
+        #Check if exp exists, and stop or abort according to force
+        print(target_exp.live_experiment)
+        if(target_exp.live_experiment is not None):
+            if(force):
+                self.stopExperiment(code)
+            else:
+                raise Exception("Live experiment already running for this config. Try with force.")
+        
+        newLiveExperiment = LiveExperiment(config=target_exp, time_started=datetime.datetime.now())
+        print(newLiveExperiment)
+        newLiveExperiment.save()
+
+        target_exp.live_experiment = newLiveExperiment
+
+        target_exp.save()
+        
 
 
 if __name__ == '__main__':

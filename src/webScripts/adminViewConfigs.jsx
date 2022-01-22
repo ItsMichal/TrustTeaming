@@ -1,34 +1,53 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { io } from "socket.io-client";
 
 function ConfigRow(props){
-    console.log(props)
-    return <tr>
-        <td>{props.round_id}</td>
-        <td>{props.user_id}</td>
-        <td>{props.question}</td>
+    return <tr className="w-100 text-center border-gray border-b">
+        <td className="py-2">{props.round_id}</td>
+        <td className="py-2">{props.user_id}</td>
+        <td className="py-2">{props.question}</td>
     </tr>
 }
 
+function ConfigLive(props){
+    console.log(props.live_experiment)
+    if(props.live_experiment == undefined){
+        return <h3 className="border-b-2 py-1">
+            Experiment is not live. <button>Click here to start it</button>
+        </h3>
+    }else{
+        return <h3 className="border-b-2 py-1">
+            It's live!!!
+        </h3>
+    }
+    
+}
+
 function ConfigTable(props){
-    console.log(props)
-    return <div class="bg-white shadow rounded-lg p-5">
-        <h2 class="font-bold text-xl border-b-2"><small class="text-gray-500">CODE: </small>{props.code}</h2>
-        <h3>{props.valid_uids.map((uid)=>{
-            uid
-        })}</h3>
-        <table class="table p-4">
+    return <div className="bg-white shadow rounded-lg p-5 my-5">
+        <h2 className="font-bold text-xl border-b-2 pb-3"><small className="text-gray-500">CODE: </small>{props.code}</h2>
+        <ConfigLive live_experiment={props.live_experiment}></ConfigLive>
+        <h3 className="border-b-2 py-1">
+            <b>Valid Users </b>
+            
+                {props.valid_uids.map((uid)=>{
+                    return<span key={uid} className="underline mx-2">{uid}</span>
+                 })}
+            
+        </h3>
+        <table className="table p-4 w-full">
             <thead>
                 <tr>
-                    <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-gray-900">Round #</th>
-                    <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-gray-900">User #</th>
-                    <th class="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-gray-900">Question</th>
+                    <th className="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-gray-900">Round #</th>
+                    <th className="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-gray-900">User #</th>
+                    <th className="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-gray-900">Question</th>
                 </tr>
             </thead>
             <tbody>
                 {props.rounds.map((round) => {
-                    return <ConfigRow key={props.code + "_"+round.ound_id+"_"+round.user_id}  round_id={round.round_id} user_id={round.user_id} question={round.question}></ConfigRow>
+                    return <ConfigRow key={props.code + "_"+round.round_id+"_"+round.user_id}  round_id={round.round_id} user_id={round.user_id} question={round.question}></ConfigRow>
                 })}
             </tbody>
         </table>
@@ -36,11 +55,10 @@ function ConfigTable(props){
 }
 
 function ConfigView(props){
-    console.log(props.configs)
     return <>
-        <h1 class="font-bold text-2xl p-2 mb-5">Configs<span class="text-white bg-red-500 rounded-xl p-1 ml-2 text-xs">LIVE</span></h1>
+        <h1 className="font-bold text-2xl p-2 mb-5">Configs<span className="text-white bg-red-500 rounded-xl p-1 ml-2 text-xs">LIVE</span></h1>
         {props.configs.map((config)=>{
-            return <ConfigTable key={config.code} valid_uids={config.valid_uids} code={config.code} rounds={config.rounds}></ConfigTable>
+            return <ConfigTable key={config.code} live_experiment={config.live_experiment} valid_uids={config.valid_uids} code={config.code} rounds={config.rounds}></ConfigTable>
         })}
     </>
 }
@@ -57,6 +75,16 @@ function getConfigs() {
             console.error(error);
         });
  }
+
+const socket = io('/admin');
+
+socket.on('echo', (args)=>{
+    console.log(args);
+});
+
+socket.on('connect', ()=>{
+    console.log("Connected to " + socket.nsp);
+});
 
 function renderConfigView(){
     getConfigs().then((configs) =>{

@@ -8,7 +8,6 @@ from DataManager import DataManager
 from dataModels.RoundConfig import RoundConfig
 
 def csvToDataModel(file : FileStorage, code : str, force : bool = False):
-    print("really?")
     stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
     csvConfigReader = reader(stream)
     print(csvConfigReader)
