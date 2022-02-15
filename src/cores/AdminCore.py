@@ -1,4 +1,6 @@
+import code
 from os import name
+from socket import socket
 import sys
 from flask.helpers import url_for
 from flask import Blueprint, session
@@ -80,12 +82,24 @@ class AdminCore(object):
     @admin_bp.route('/getConfig', methods=['GET', 'POST'])
     def getConfig():
         return DataManager().getExperimentsJSON()
-        # return redirect(url_for("admin.index"))
 
-    @socketio.on('requestLive', namespace=route_base)
-    def liveRequest(req):
-        emit('liveexp', DataManager().getExperimentByCode(AuthCore.cur_code()))
+    @socketio.on('sendLive', namespace=route_base)
+    def liveRequest(req={}):
+        emit('liveexp', DataManager().getLiveExperimentsJSON())
+    
+    @socketio.on('sendStart', namespace=route_base)
+    def requestStartLive(req={}):
+        if("code" in req):
+            newExp = DataManager().initializeExperiment(req["code"])
+            print(newExp)
+        else:
+            print("No attr!")
 
-    @socketio.on('echo', namespace='/admin')
+    @socketio.on('stopExperiment', namespace=route_base)
+    def stopExperiment(req={}):
+        if("code" in req):
+            DataManager().stopExperiment(req["code"])
+
+    @socketio.on('echo', namespace=route_base)
     def testCmd(req):
         emit('echo', 'Pong!')

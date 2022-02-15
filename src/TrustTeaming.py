@@ -1,4 +1,5 @@
 #Necessary imports
+from asyncio.log import logger
 from flask import Flask
 from flask_socketio import SocketIO, Namespace
 
@@ -41,4 +42,4 @@ def startWebserver(debug=False):
     if(not debug):
         socketio.run(app)
     else:
-        socketio.run(app, port=8080, debug=True, use_reloader=True)
+        socketio.run(app, log_output=True, port=8080, debug=True, use_reloader=True)
