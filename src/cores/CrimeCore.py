@@ -20,3 +20,13 @@ class CrimeCore(object):
     @crime_bp.route('/')
     def index():
         return CrimeCore.crimeMap()
+
+
+    # Get list of valid crime types at the current moment.
+    @crime_bp.route('/getUserListOfCrimeTypes')
+    def precheck_returnCrimeTypesForUser():
+        return CrimeCore.returnCrimeTypesForUser()
+
+    @AuthCore.require_login
+    def returnCrimeTypesForUser():
+        return ""

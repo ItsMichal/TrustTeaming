@@ -52,3 +52,5 @@ docs/_build/
 node_modules
 
 .DS_Store
+crime.csv
+.vscode

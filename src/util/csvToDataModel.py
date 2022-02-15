@@ -5,10 +5,9 @@ from werkzeug.datastructures import FileStorage
 import io
 from DataManager import DataManager
 
-from dataModels.Config import RoundConfig
+from dataModels.RoundConfig import RoundConfig
 
 def csvToDataModel(file : FileStorage, code : str, force : bool = False):
-    print("really?")
     stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
     csvConfigReader = reader(stream)
     print(csvConfigReader)
@@ -22,7 +21,7 @@ def csvToDataModel(file : FileStorage, code : str, force : bool = False):
 
     for row in csvConfigReader:
         #Check validity
-        if len(row) is not 8:
+        if len(row) != 8:
             raise(BaseException("Wrong CSV format!"))
 
 

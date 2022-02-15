@@ -1,6 +1,5 @@
 import rom
 
-
 class RoundConfig(rom.Model):
     code = rom.String(required=True, index=True, keygen=rom.IDENTITY_CI)
     user_id = rom.Integer(required=True, index=True)

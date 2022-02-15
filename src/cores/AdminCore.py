@@ -1,6 +1,8 @@
+import code
+from os import name
+from socket import socket
 import sys
 from flask.helpers import url_for
-from flask_classful import FlaskView, method, route
 from flask import Blueprint, session
 from flask import request
 from werkzeug.utils import redirect
@@ -10,6 +12,8 @@ sys.path.append("..") #python bs
 from views import AdminView
 from auth import AuthCore
 from util.csvToDataModel import csvToDataModel
+from TrustTeaming import socketio
+from flask_socketio import emit
 
 #FlaskView is actually a controller :)
 class AdminCore(object):
@@ -56,13 +60,14 @@ class AdminCore(object):
             session['configMsg'] = "Code is greater than 10 characters!"
             return redirect(url_for('admin.index'))
 
+        print(csvConfig)
 
         if csvConfig is None or csvConfig.content_type == "application/octet-stream":
             session['configMsg'] = "No file received by server!"
             return redirect(url_for('admin.index'))
 
-        if csvConfig.content_type != "text/csv":
-            session['configMsg'] = "Not a valid CSV file!"
+        if csvConfig.content_type != "text/csv" and csvConfig.content_type != "application/vnd.ms-excel":
+            session['configMsg'] = "Not a valid CSV file! (Also check Redis server)"
             return redirect(url_for('admin.index'))
         
         try:
@@ -77,4 +82,24 @@ class AdminCore(object):
     @admin_bp.route('/getConfig', methods=['GET', 'POST'])
     def getConfig():
         return DataManager().getExperimentsJSON()
-        # return redirect(url_for("admin.index"))
+
+    @socketio.on('sendLive', namespace=route_base)
+    def liveRequest(req={}):
+        emit('liveexp', DataManager().getLiveExperimentsJSON())
+    
+    @socketio.on('sendStart', namespace=route_base)
+    def requestStartLive(req={}):
+        if("code" in req):
+            newExp = DataManager().initializeExperiment(req["code"])
+            print(newExp)
+        else:
+            print("No attr!")
+
+    @socketio.on('stopExperiment', namespace=route_base)
+    def stopExperiment(req={}):
+        if("code" in req):
+            DataManager().stopExperiment(req["code"])
+
+    @socketio.on('echo', namespace=route_base)
+    def testCmd(req):
+        emit('echo', 'Pong!')
