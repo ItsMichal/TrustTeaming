@@ -12,6 +12,25 @@
                 <div class="text-3xl">Welcome to Trust Teaming <small class="uppercase text-sm text-gray-400">Beta v2021.12</small></div>
                 <div class="text-2xl font-light">Please log in using the instructions you received.</div>
                 <br>
+                <form action="/login" method="post">
+                    <p>Code</p>
+                    <input class="border-black border-2 rounded-xl p-2" id="code" name="code" type="text"></input>
+                    <br>
+                    <p>User ID</p>
+                    <input class="border-black border-2 rounded-xl p-2" id="pass"  name="user_id" type="number"></input>
+                    <br>
+                    <input type="submit" class="bg-black rounded-xl text-white p-2 mt-5 font-bold" name="submit" value="Log In" id="submit"></input>
+                    <br>
+                </form>
+                <div id="errormsg" class="text-red-500 text-xl">{{errorMsg}}</div>
+
+            {% elif code == "SHINE" %}
+                <div class="text-3xl">Welcome back to Trust Teaming <small class="uppercase text-sm text-gray-400">Beta v2021.12</small></div>
+                <div class="text-2xl font-bold">Logged into ADMIN MODE</div>
+                <div class="text-md font-light">Feel free to change your information below if directed.<br>
+                Otherwise, proceed <a class="border-b-2 border-green-500 hover:text-green-500" href={{url_for("admin.index")}}>here</a> or 
+                <a class="border-b-2 border-red-500 hover:text-red-500" href={{url_for("admin.logout")}}>log out.</a>
+                </div>
             {% else %}
                 <div class="text-3xl">Welcome back to Trust Teaming <small class="uppercase text-sm text-gray-400">Beta v2021.12</small></div>
                 <div class="text-2xl font-light">User ID - {{user_id}} / Code - {{code}}</div>
@@ -19,20 +38,7 @@
                 Otherwise, proceed <a class="border-b-2 border-blue-500 hover:text-blue-500" href={{url_for("trust.index")}}>here</a> or 
                 <a class="border-b-2 border-red-500 hover:text-red-500" href={{url_for("admin.logout")}}>log out.</a>
                 </div>
-                <br>
             {% endif %}
-            <form action="/login" method="post">
-                <p>Code</p>
-                <input class="border-black border-2 rounded-xl p-2" id="code" name="code" type="text"></input>
-                <br>
-                <p>User ID</p>
-                <input class="border-black border-2 rounded-xl p-2" id="pass"  name="user_id" type="number"></input>
-                <br>
-                <input type="submit" class="bg-black rounded-xl text-white p-2 mt-5 font-bold" name="submit" value="Log In" id="submit"></input>
-                <br>
-            </form>
-            
-            <div id="errormsg" class="text-red-500 text-xl">{{errorMsg}}</div>
         </div>
         <script src="static/dist/login.js"></script>
     </body>

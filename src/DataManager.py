@@ -5,6 +5,7 @@ from rom import util
 from dataModels.ExperimentConfig import ExperimentConfig
 from dataModels.RoundConfig import RoundConfig
 from dataModels.LiveExperiment import LiveExperiment
+from dataModels.Pin import Pin
 import datetime
 
 # Singleton Data Mgr class
@@ -63,6 +64,15 @@ class DataManager(object):
             print(err)
             return None
 
+    def getLiveExperimentByCode(self, code) -> LiveExperiment:
+        try:
+            getExperimentRelatedToCode = ExperimentConfig.get_by(code=code.encode())
+            print(getExperimentRelatedToCode.live_experiment)
+            return getExperimentRelatedToCode.live_experiment
+        except BaseException as err:
+            print(err)
+            return None
+
     def getRoundConfig(self, user_id, code, round_id):
         try:
             getRoundCfg = RoundConfig.query.filter(user_id=user_id).filter(round_id=round_id).filter(code=code).first()
@@ -70,6 +80,22 @@ class DataManager(object):
             return getRoundCfg
         except BaseException as err:
             print(err)
+
+    def getExperimentConfigJSON(self, code):
+        returnJson = {}
+        
+        exp = self.getExperimentByCode(code)
+        code = exp.code.decode()
+        valid_uids = exp.valid_uids
+        rounds = []
+
+        for rnd in exp.roundConfigs:
+            rounds.append({"round_id":rnd.round_id, "user_id":rnd.user_id, "question":rnd.question.decode()})
+        
+        returnJson = {"code":code, "valid_uids":valid_uids, "rounds":rounds}
+        
+        return returnJson
+
 
     def getExperimentsJSON(self):
         all_exps = ExperimentConfig.query.all()
@@ -85,8 +111,30 @@ class DataManager(object):
                 rounds.append({"round_id":rnd.round_id, "user_id":rnd.user_id, "question":rnd.question.decode()})
             returnJson["configs"].append({"code":code, "valid_uids":valid_uids, "rounds":rounds})
 
-        print(returnJson)
         return returnJson
+
+    #TODO- add pins
+    def getLiveExperimentJSON(self, code):
+        live_exp = self.getLiveExperimentByCode(code)
+
+
+        returnJson = {"time_started": live_exp.time_started.isoformat(timespec='milliseconds'), "code": live_exp.config.code.decode(), 
+                        "config": self.getExperimentConfigJSON(live_exp.config.code.decode()),
+                        "state": live_exp.state.decode(), "timeInRound": live_exp.timeInRound,
+                        "curRoundNum": live_exp.curRoundNum, "users":live_exp.users}        
+        
+        return returnJson
+
+    def getLiveExperimentsJSON(self):
+        all_exp = LiveExperiment.query.all();
+
+        returnJson = {"live_experiments":{}}
+
+        for exp in all_exp:
+            returnJson["live_experiments"][exp.config.code.decode()] = self.getLiveExperimentJSON(exp.config.code.decode())
+
+        return returnJson
+
 
 
     # Stops an experiment by deleting it
@@ -110,13 +158,9 @@ class DataManager(object):
                 raise Exception("Live experiment already running for this config. Try with force.")
         
         newLiveExperiment = LiveExperiment(config=target_exp, time_started=datetime.datetime.now())
-        print(newLiveExperiment)
         newLiveExperiment.save()
-
-        target_exp.live_experiment = newLiveExperiment
-
-        target_exp.save()
         
+        return newLiveExperiment
 
 
 if __name__ == '__main__':

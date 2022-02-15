@@ -7,7 +7,8 @@
     "start": "cd src && python app.py",
     "build": "webpack --progress --config webpack.config.js",
     "dev-build": "webpack --progress -d --config webpack.config.js",
-    "dev-watch": "webpack --progress --config webpack.config.js --watch -d source-map"
+    "dev-watch": "webpack --progress --config webpack.config.js --watch -d source-map",
+    "debug": "cd src && python3 -m debugpy --wait-for-client  --listen 5678 app.py"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,8 @@
     "webpack-cli": "^4.9.1"
   },
   "dependencies": {
+    "framer-motion": "^6.2.4",
+    "luxon": "^2.3.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "socket.io-client": "^4.4.1"
