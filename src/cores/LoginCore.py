@@ -9,7 +9,7 @@ from auth.AuthCore import AuthCore
 
 sys.path.append("..") #python bs
 from views import LoginView
-from DataManager import DataManager
+from data import DataManager
 
 #FlaskView is actually a controller :)
 class LoginCore(object):
@@ -69,6 +69,10 @@ class LoginCore(object):
             
             if(expCfg is None):
                 session['errorMsg'] = "Code not found in configuration."
+                return redirect(url_for('login.index'))
+
+            if(expCfg.live_experiment is None):
+                session['errorMsg'] = "Please ask your administrator to start the experiment."
                 return redirect(url_for('login.index'))
 
             #Check that User ID is defined in conf

@@ -14,7 +14,7 @@ socketio = SocketIO()
 def startWebserver(debug=False):
 
     # Import here to avoid circular imports
-    from DataManager import DataManager
+    from data import DataManager
     from auth.AuthCore import AuthCore
     from cores import AdminCore, LoginCore, ExperimentCore
     

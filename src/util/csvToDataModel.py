@@ -3,7 +3,7 @@ from datetime import datetime
 import json
 from werkzeug.datastructures import FileStorage
 import io
-from DataManager import DataManager
+from data import DataManager
 
 from dataModels.RoundConfig import RoundConfig
 

@@ -15,7 +15,7 @@ This webapp is the newly improved testbed for the Trust Teaming experiment condu
 4. Run `npm install`
 5. (**Development**) Set `FLASK_ENV` environment var to `development`
 6. To start server- `npm run start`
-7. (**Development**) Use `npm run build` or `npm run watch` to rebuild webpack items (.js, .jsx, .css)
+7. (**Development**) Use `npm run build` or `npm run dev-watch` to rebuild webpack items (.js, .jsx, .css)
 8. Visit http://127.0.0.1:5000 on participant computers. Admin login is done by entering `SHINE` as the code. 
 
 **Warning**- Do not trust sensitive data to this program (read- passwords). This is out of scope for this testbed's responsibilities.

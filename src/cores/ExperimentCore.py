@@ -3,7 +3,7 @@ from flask.helpers import url_for
 from flask import Blueprint, session
 from flask import request
 from werkzeug.utils import redirect
-from DataManager import DataManager
+from data import DataManager
 from cores.CrimeCore import CrimeCore
 
 sys.path.append("..") #python bs

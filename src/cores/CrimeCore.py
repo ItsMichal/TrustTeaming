@@ -3,11 +3,14 @@
 #Shared Map
 import sys
 from flask.blueprints import Blueprint
+from data import DataManager
 
 sys.path.append("..") #python bs
 from views import CrimeView
 from auth import AuthCore
-from flask import session
+from flask import (session, request)
+from TrustTeaming import socketio
+from flask_socketio import emit
 
 class CrimeCore(object):
     route_prefix = "/crime"
@@ -21,12 +24,21 @@ class CrimeCore(object):
     def index():
         return CrimeCore.crimeMap()
 
+    @crime_bp.route('/requestPins', methods=['POST'])
+    def requestCrimeData():
+      
+        if("startDate" in request.get_json() and "endDate" in request.get_json()):
+           
 
-    # Get list of valid crime types at the current moment.
-    @crime_bp.route('/getUserListOfCrimeTypes')
-    def precheck_returnCrimeTypesForUser():
-        return CrimeCore.returnCrimeTypesForUser()
+            
+            return {
+                'dates': 
+                     DataManager().crimeDataMgr.getCrimeDataFromRange(request.get_json()['startDate'], request.get_json()['endDate'])
+            }
+        else:
+            return "Yikes", 400
 
-    @AuthCore.require_login
-    def returnCrimeTypesForUser():
-        return ""
+    @crime_bp.route('/requestStartEnd')
+    def requestStartEndRange():
+        startEnd = DataManager().crimeDataMgr.getMaxRange()
+        return {'startDate': startEnd[0], 'endDate': startEnd[1]}

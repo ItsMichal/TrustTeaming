@@ -4,7 +4,7 @@ from flask import render_template
 from flask_socketio import emit
 import sys
 import json
-from DataManager import DataManager
+from data.DataManager import DataManager
 sys.path.append("..") #python bs
 from views import LoginView
 from auth import AuthCore
