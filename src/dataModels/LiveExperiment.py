@@ -14,8 +14,7 @@ class LiveExperiment(rom.Model):
     timeInRound = rom.Integer(required=True, default=0)
     curRoundNum = rom.Integer(required=True, default=1)
     users = rom.Json(required=True, default={}) #TODO- replace with data model and proper logout
-    curRound = rom.Integer(required=True, default=0)
     curPins = rom.OneToMany('Pin')
 
     def __str__(self):
-        return "-\nLive Experiment - {}\nTimestamp {}\nState - {}\ncurRound - {}\n-".format(self.config.code, self.time_started, self.state, self.curRound)
+        return "-\nLive Experiment - {}\nTimestamp {}\nState - {}\ncurRound - {}\n-".format(self.config.code, self.time_started, self.state, self.curRoundNum)

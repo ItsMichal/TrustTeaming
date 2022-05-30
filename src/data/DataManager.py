@@ -59,7 +59,7 @@ class DataManager(object):
         try:
             if(force):
                 oldExperiment = self.getExperimentByCode(code)
-                print(oldExperiment)
+                # print(oldExperiment)
                 if(oldExperiment is not None):
                     oldExperiment.delete()
             
@@ -83,7 +83,7 @@ class DataManager(object):
     def getLiveExperimentByCode(self, code) -> LiveExperiment:
         try:
             getExperimentRelatedToCode = ExperimentConfig.get_by(code=code.encode())
-            print(getExperimentRelatedToCode.live_experiment)
+            # print(getExperimentRelatedToCode.live_experiment)
             return getExperimentRelatedToCode.live_experiment
         except BaseException as err:
             print(err)
@@ -92,7 +92,7 @@ class DataManager(object):
     def getRoundConfig(self, user_id, code, round_id):
         try:
             getRoundCfg = RoundConfig.query.filter(user_id=user_id).filter(round_id=round_id).filter(code=code).first()
-            print(getRoundCfg)
+            # print(getRoundCfg)
             return getRoundCfg
         except BaseException as err:
             print(err)
@@ -124,7 +124,7 @@ class DataManager(object):
             rounds = []
 
             for rnd in exp.roundConfigs:
-                rounds.append({"round_id":rnd.round_id, "user_id":rnd.user_id, "question":rnd.question.decode()})
+                rounds.append({"round_id":rnd.round_id, "user_id":rnd.user_id, "question":rnd.question.decode(), "layers": rnd.layers})
             returnJson["configs"].append({"code":code, "valid_uids":valid_uids, "rounds":rounds})
 
         return returnJson

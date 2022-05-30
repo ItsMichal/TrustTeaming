@@ -91,7 +91,7 @@ class AdminCore(object):
     def requestStartLive(req={}):
         if("code" in req):
             newExp = DataManager().initializeExperiment(req["code"])
-            print(newExp)
+            # print(newExp)
         else:
             print("No attr!")
 

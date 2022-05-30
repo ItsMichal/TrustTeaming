@@ -31,10 +31,10 @@ class CrimeCore(object):
         if('categories' in request.get_json() and "startDate" in request.get_json() and "endDate" in request.get_json()): 
             return DataManager().crimeDataMgr.getCrimeDataFromRange(request.get_json()['startDate'], request.get_json()['endDate'], request.get_json()['categories'])
         else:
-            return {'error':"Yikes"}, 400
+            return {'error':"Invalid request parameters"}, 400
     
     @AuthCore.require_login
     @crime_bp.route('/requestStartEnd')
     def requestStartEndRange():
         startEnd = DataManager().crimeDataMgr.getMaxRange()
-        return {'startDate': startEnd[0], 'endDate': startEnd[1], 'code': session['code']}
+        return {'startDate': startEnd[0], 'endDate': startEnd[1], 'code': session['code'], 'userId': session['user_id']}

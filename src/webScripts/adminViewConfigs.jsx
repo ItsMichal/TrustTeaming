@@ -5,12 +5,22 @@ import { io } from "socket.io-client";
 import { DateTime, Duration } from "luxon";
 import { motion } from "framer-motion"
 import { ConfigAccordion } from './accordion';
+import { offenseToIcon } from './crimes';
 
 function ConfigRow(props){
+    console.log("NOOOO");
+    console.log(props);
     return <tr className="w-100 text-center border-gray border-b">
         <td className="py-2">{props.round_id}</td>
         <td className="py-2">{props.user_id}</td>
         <td className="py-2">{props.question}</td>
+        <td className="py-2">
+            <div className="flex flex-row place-content-center">
+            
+            {props.layers.map((layer) => {
+            return <img className="h-12 flex-shrink" src={offenseToIcon[layer]}></img>
+        })}
+        </div></td>
     </tr>
 }
 
@@ -93,11 +103,13 @@ function ConfigTable(props){
                             <th className="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-gray-900">Round #</th>
                             <th className="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-gray-900">User #</th>
                             <th className="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-gray-900">Question</th>
+                            <th className="border-b-2 p-4 dark:border-dark-5 whitespace-nowrap font-normal text-gray-900">Layers</th>
                         </tr>
                     </thead>
                     <tbody>
                         {props.rounds.map((round) => {
-                            return <ConfigRow key={props.code + "_"+round.round_id+"_"+round.user_id}  round_id={round.round_id} user_id={round.user_id} question={round.question}></ConfigRow>
+                            console.log(round);
+                            return <ConfigRow key={props.code + "_"+round.round_id+"_"+round.user_id}  round_id={round.round_id} user_id={round.user_id} question={round.question} layers={round.layers}></ConfigRow>
                         })}
                     </tbody>
                 </table>
@@ -141,7 +153,7 @@ class ConfigView extends React.Component {
                 <h1 className="font-bold text-2xl p-2 mb-5">Configs</h1>
                 {this.props != undefined && 
                     this.props.configs.map((config)=>{
-                        console.log(this.state)
+                        console.log("YES")
                         return <ConfigTable key={config.code} live_experiment={this.state.live_experiment[config.code]} valid_uids={config.valid_uids} code={config.code} rounds={config.rounds}></ConfigTable>
                     })
                 }
