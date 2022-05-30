@@ -14,13 +14,17 @@ socketio = SocketIO()
 def startWebserver(debug=False):
 
     # Import here to avoid circular imports
-    from DataManager import DataManager
+    from data import DataManager
     from auth.AuthCore import AuthCore
     from cores import AdminCore, LoginCore, ExperimentCore
     
     #Start Flask app
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'shinelabnotverysecret'
+
+    import logging
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.ERROR)
 
     #Start AuthCore and data manager
     AuthCore()

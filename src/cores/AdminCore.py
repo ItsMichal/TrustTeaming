@@ -6,7 +6,7 @@ from flask.helpers import url_for
 from flask import Blueprint, session
 from flask import request
 from werkzeug.utils import redirect
-from DataManager import DataManager
+from data import DataManager
 
 sys.path.append("..") #python bs
 from views import AdminView
@@ -60,7 +60,7 @@ class AdminCore(object):
             session['configMsg'] = "Code is greater than 10 characters!"
             return redirect(url_for('admin.index'))
 
-        print(csvConfig)
+        # print(csvConfig)
 
         if csvConfig is None or csvConfig.content_type == "application/octet-stream":
             session['configMsg'] = "No file received by server!"

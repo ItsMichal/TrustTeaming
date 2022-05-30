@@ -3,3 +3,5 @@ flask
 redis
 rom
 flask-socketio
+pandas
+pyarrow
