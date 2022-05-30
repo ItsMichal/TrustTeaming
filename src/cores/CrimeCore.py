@@ -24,21 +24,17 @@ class CrimeCore(object):
     def index():
         return CrimeCore.crimeMap()
 
+    @AuthCore.require_login
     @crime_bp.route('/requestPins', methods=['POST'])
     def requestCrimeData():
-      
-        if("startDate" in request.get_json() and "endDate" in request.get_json()):
-           
-
-            
-            return {
-                'dates': 
-                     DataManager().crimeDataMgr.getCrimeDataFromRange(request.get_json()['startDate'], request.get_json()['endDate'])
-            }
+        print("Crime REQ", DataManager().getLiveCore(session['code']))
+        if('categories' in request.get_json() and "startDate" in request.get_json() and "endDate" in request.get_json()): 
+            return DataManager().crimeDataMgr.getCrimeDataFromRange(request.get_json()['startDate'], request.get_json()['endDate'], request.get_json()['categories'])
         else:
-            return "Yikes", 400
-
+            return {'error':"Yikes"}, 400
+    
+    @AuthCore.require_login
     @crime_bp.route('/requestStartEnd')
     def requestStartEndRange():
         startEnd = DataManager().crimeDataMgr.getMaxRange()
-        return {'startDate': startEnd[0], 'endDate': startEnd[1]}
+        return {'startDate': startEnd[0], 'endDate': startEnd[1], 'code': session['code']}

@@ -10,37 +10,7 @@ import 'leaflet';
 import greenIcon from '../assets/img/green.png';
 import redIcon from '../assets/img/red.png';
 import shadow from '../assets/img/shadow.png';
-import allOtherCrimesIcon from "../assets/img/icons/all-other-crimes.png"
-import aggravatedIcon from "../assets/img/icons/aggravated-assault.png"
-import burglaryIcon from "../assets/img/icons/burglary.png";
-import arsonIcon from "../assets/img/icons/arson.png"
-import autoTheftIcon from "../assets/img/icons/auto-theft.png"
-import drugAlcIcon from "../assets/img/icons/drug-alcohol.png"
-import larcenyIcon from "../assets/img/icons/larceny.png"
-import murderIcon from "../assets/img/icons/murder.png"
-import otherCrimesIcon from "../assets/img/icons/other-crimes-against-persons.png"
-import publicDisorderIcon from "../assets/img/icons/public-disorder.png"
-import robberyIcon from "../assets/img/icons/robbery.png"
-import theftIcon from "../assets/img/icons/theft-from-motor-vehicle.png"
-import trafficIcon from "../assets/img/icons/traffic-accident.png"
-import whiteCollarIcon from "../assets/img/icons/white-collar-crime.png"
-
-export const offenseToIcon = {
-    "all-other-crimes": allOtherCrimesIcon,
-    "arson": arsonIcon,
-    "auto-theft": autoTheftIcon,
-    "aggravated-assault": aggravatedIcon,
-    "burglary": burglaryIcon,
-    "drug-alcohol": drugAlcIcon,
-    "larceny": larcenyIcon,
-    "murder": murderIcon,
-    "other-crimes-against-persons": otherCrimesIcon,
-    "public-disorder": publicDisorderIcon,
-    'robbery': robberyIcon,
-    'theft-from-motor-vehicle': theftIcon,
-    'traffic-accident': trafficIcon,
-    'white-collar-crime': whiteCollarIcon
-}
+import {offenseToIcon} from './crimes';
 
 export function Pin({lat, lon, green, offense, date, address}){
     

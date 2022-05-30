@@ -36,7 +36,7 @@ class CrimeDataManager(object):
         self.crimeData = pd.read_feather(os.path.join(os.path.dirname(__file__),filepath))
         # return self
 
-    def getCrimeDataFromRange(self, start : str, end : str, exclude : datetime.datetime = None) -> list[CrimeInstance]:
+    def getCrimeDataFromRange(self, start : str, end : str, categories : list[str]):
 
         startDateProto = strptime(start, '%Y-%m-%d')
         endDateProto = strptime(end, '%Y-%m-%d')
@@ -47,7 +47,10 @@ class CrimeDataManager(object):
 
         tempCrimeData = self.crimeData.loc[(self.crimeData['FIRST_OCCURRENCE_DATE'] > startDate) & (self.crimeData['FIRST_OCCURRENCE_DATE'] < endDate)]
 
+        tempCrimeData = tempCrimeData[tempCrimeData['OFFENSE_CATEGORY_ID'].isin(categories)]
+        
         numToSample = 200
+        maxResults = len(tempCrimeData.index)
 
         if(numToSample > len(tempCrimeData.index)):
             numToSample = len(tempCrimeData.index)
@@ -62,7 +65,7 @@ class CrimeDataManager(object):
             ))
 
         output = list(map(mapToCI, tempCrimeData.values.tolist()))        
-        return output
+        return {'dates': output, 'numResults': numToSample, 'maxResults': maxResults}
 
     def getMaxRange(self) -> list[datetime.datetime]:
         return [min(self.crimeData['FIRST_OCCURRENCE_DATE']), max(self.crimeData['FIRST_OCCURRENCE_DATE'])]

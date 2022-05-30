@@ -60,7 +60,7 @@ class AdminCore(object):
             session['configMsg'] = "Code is greater than 10 characters!"
             return redirect(url_for('admin.index'))
 
-        print(csvConfig)
+        # print(csvConfig)
 
         if csvConfig is None or csvConfig.content_type == "application/octet-stream":
             session['configMsg'] = "No file received by server!"

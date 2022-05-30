@@ -2,11 +2,13 @@ import json
 import redis
 
 from rom import util
+from live.LiveCore import LiveCore
 from data.CrimeDataManager import CrimeDataManager
 from dataModels.ExperimentConfig import ExperimentConfig
 from dataModels.RoundConfig import RoundConfig
 from dataModels.LiveExperiment import LiveExperiment
 from dataModels.Pin import Pin
+from TrustTeaming import socketio
 import datetime
 
 # Singleton Data Mgr class
@@ -15,12 +17,23 @@ import datetime
 class DataManager(object):
     _instance = None
     crimeDataMgr = None
+
+    def __initializeLiveExps(self):
+        all_exps = LiveExperiment.query.all()
+
+        for exp in all_exps:
+            new_core = LiveCore(exp)
+            self.liveCores[exp.config.code.decode()] = new_core
+            socketio.on_namespace(new_core)
+
     def __new__(self):
         if self._instance is None:
             print("Creating Experiment Config")
             self._instance = super(DataManager, self).__new__(self)
             self.crimeDataMgr = CrimeDataManager()
+            self.liveCores = {}
             util.set_connection_settings(host="127.0.0.1", db=1) # update this to be reusable
+            self._instance.__initializeLiveExps()
         return self._instance
 
 
@@ -129,7 +142,7 @@ class DataManager(object):
         return returnJson
 
     def getLiveExperimentsJSON(self):
-        all_exp = LiveExperiment.query.all();
+        all_exp = LiveExperiment.query.all()
 
         returnJson = {"live_experiments":{}}
 
@@ -143,6 +156,9 @@ class DataManager(object):
     # Stops an experiment by deleting it
     # TODO- add save feature once logging implemented
     def stopExperiment(self, code):
+        if code in self.liveCores:
+            self.liveCores.pop(code)
+
         target_exp = self.getExperimentByCode(code)
         target_exp.live_experiment.delete()
         target_exp.save(force=True)
@@ -162,9 +178,16 @@ class DataManager(object):
         
         newLiveExperiment = LiveExperiment(config=target_exp, time_started=datetime.datetime.now())
         newLiveExperiment.save()
+
+        self.liveCores[code] = LiveCore(newLiveExperiment);
         
         return newLiveExperiment
 
+    def getLiveCore(self, code):
+        if code in self.liveCores:
+            return self.liveCores[code]
+        else:
+            return None
 
 if __name__ == '__main__':
     DataManager()

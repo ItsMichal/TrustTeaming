@@ -22,6 +22,10 @@ def startWebserver(debug=False):
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'shinelabnotverysecret'
 
+    import logging
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.ERROR)
+
     #Start AuthCore and data manager
     AuthCore()
     DataManager()
