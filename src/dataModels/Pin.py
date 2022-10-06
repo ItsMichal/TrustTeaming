@@ -2,15 +2,31 @@ import rom
 #TODO- add support for deleted pins
 
 class Pin(rom.Model):
-    pin_id = rom.Integer(required=True)
-    live_experiment = rom.ManyToOne('LiveExperiment', on_delete="cascade")
-    color = rom.String(required=True)
+    pinId = rom.Integer(required=True, index=True)
+    liveExperiment = rom.ManyToOne('LiveExperiment', on_delete="cascade")
+    code = rom.String(required=True,  index=True, keygen=rom.IDENTITY)
+    color = rom.String(required=True, default=b"red")
     timePlaced = rom.DateTime(required=True, unique=True)
-    userPlaced = rom.Integer(required=True)
+    aiPlaced = rom.Boolean(required=True, default=False)
+    userPlaced = rom.String(required=True, default=b"")
+    userMoved = rom.String(default=b"")
     deleted = rom.Boolean(required=True, default=False)
     lat = rom.Float()
     lon = rom.Float()
 
     unique_together = [
-        ('pin_id', 'live_experiment')
+        ('pinId', 'code')
     ]
+
+    def toJSON(self):
+        return {
+            'pinId': self.pinId,
+            'color': self.color.decode(),
+            'timePlaced': str(self.timePlaced),
+            'userPlaced': self.userPlaced,
+            'aiPlaced': self.aiPlaced,
+            'deleted': self.deleted,
+            'userMoved': self.userMoved,
+            'lat': self.lat,
+            'lon': self.lon,
+        }

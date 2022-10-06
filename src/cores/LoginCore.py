@@ -71,7 +71,7 @@ class LoginCore(object):
                 session['errorMsg'] = "Code not found in configuration."
                 return redirect(url_for('login.index'))
 
-            if(expCfg.live_experiment is None):
+            if(expCfg.liveExperiment is None):
                 session['errorMsg'] = "Please ask your administrator to start the experiment."
                 return redirect(url_for('login.index'))
 

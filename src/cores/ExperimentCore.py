@@ -3,6 +3,7 @@ from flask.helpers import url_for
 from flask import Blueprint, session
 from flask import request
 from werkzeug.utils import redirect
+from cores.SharedCore import SharedCore
 from data import DataManager
 from cores.CrimeCore import CrimeCore
 
@@ -18,6 +19,8 @@ class ExperimentCore(object):
     def __init__(self):
         #Register own blueprint
         self.crime_core : CrimeCore = CrimeCore()
+        self.shared_core : SharedCore = SharedCore()
+        self.experiment_bp.register_blueprint(self.shared_core.shared_bp)
         self.experiment_bp.register_blueprint(self.crime_core.crime_bp)
         print("Crime Map registered")
 

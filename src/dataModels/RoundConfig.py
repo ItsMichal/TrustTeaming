@@ -16,5 +16,18 @@ class RoundConfig(rom.Model):
         ('code', 'round_id', 'user_id')
     ]
 
+    def toJSON(self):
+        return {
+            "code": self.code.decode(),
+            "userId": self.user_id,
+            "roundId": self.round_id,
+            "layers": self.layers,
+            "question": self.question.decode(),
+            "time": self.time,
+            "targetDate": str(self.target_date),
+            "maxRed": self.max_red,
+            "maxGreen": self.max_green
+        }
+
     def __str__(self):
         return "User Id - {}\tCode - {}\tRound Id - {}\nQuestion - {}\n".format(self.user_id, self.code, self.round_id, self.question)

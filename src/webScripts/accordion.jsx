@@ -2,6 +2,12 @@ import * as React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+//
+// This is a library used to create the smooth accordion animation
+// on the admin page. 
+// TODO: Properly attribute this code, as its not ours
+//
+
 const Accordion = ({ i, expanded, setExpanded,topElement,innerElement }) => {
   const isOpen = i === expanded;
 
@@ -66,4 +72,3 @@ export const ConfigAccordion = ({topElement, innerElement}) => {
 
   return <Accordion i={1} expanded={expanded} setExpanded={setExpanded} topElement={topElement} innerElement={innerElement} />
 };
-

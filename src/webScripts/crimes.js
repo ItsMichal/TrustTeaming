@@ -30,6 +30,23 @@ export const offenseToIcon = {
     'white-collar-crime': whiteCollarIcon
 }
 
+export const offenseToColor = {
+    "all-other-crimes": "all",
+    "arson": "red",
+    "auto-theft": "green",
+    "aggravated-assault": "red",
+    "burglary": "red",
+    "drug-alcohol": "green",
+    "larceny": "green",
+    "murder": "red",
+    "other-crimes-against-persons": "all",
+    "public-disorder": "all",
+    'robbery': "red",
+    'theft-from-motor-vehicle': "green",
+    'traffic-accident': "green",
+    'white-collar-crime': "green"
+}
+
 export const offenses = [
     'all-other-crimes',
     'arson',

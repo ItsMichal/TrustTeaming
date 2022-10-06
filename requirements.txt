@@ -5,3 +5,4 @@ rom
 flask-socketio
 pandas
 pyarrow
+geopy

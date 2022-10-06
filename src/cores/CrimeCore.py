@@ -1,6 +1,6 @@
 #TBC
 
-#Shared Map
+#Crime Map
 import sys
 from flask.blueprints import Blueprint
 from data import DataManager

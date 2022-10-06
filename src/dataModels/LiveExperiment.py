@@ -8,13 +8,13 @@ from rom.columns import NO_ACTION_DEFAULT
 #live- running experiment round
 
 class LiveExperiment(rom.Model):
-    time_started = rom.DateTime(required=True)
-    config = rom.OneToOne('ExperimentConfig', on_delete='cascade', unique=True, required=True)
+    timeStarted = rom.DateTime(required=True)
+    config = rom.OneToOne('ExperimentConfig', required=True, on_delete='cascade', unique=True)
     state = rom.String(required=True, default=b"idle")
-    timeInRound = rom.Integer(required=True, default=0)
+    timeRoundStarted = rom.DateTime()
     curRoundNum = rom.Integer(required=True, default=1)
-    users = rom.Json(required=True, default={}) #TODO- replace with data model and proper logout
+    users = rom.OneToMany('LiveUser')
     curPins = rom.OneToMany('Pin')
 
     def __str__(self):
-        return "-\nLive Experiment - {}\nTimestamp {}\nState - {}\ncurRound - {}\n-".format(self.config.code, self.time_started, self.state, self.curRoundNum)
+        return "-\nLive Experiment - {}\nTimestamp {}\nState - {}\ncurRound - {}\n-".format(self.config.code, self.timeStarted, self.state, self.curRoundNum)

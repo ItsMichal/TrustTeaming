@@ -1,10 +1,13 @@
-const webpack = require('webpack');
+/* eslint-disable no-undef */
+// const webpack = require('webpack');
 const config = {
     mode: "development",
     entry:  {
-        'login.js': __dirname + '/src/webScripts/login.js',
+        'global.js': __dirname + '/src/webScripts/global.js',
+        'global.css': __dirname + '/src/assets/css/global.css',
         'adminViewConfig.js': __dirname + '/src/webScripts/adminViewConfigs.jsx',
         'crimeMapListing.js': __dirname + '/src/webScripts/crimeMapListing.jsx',
+        'sharedMap.js': __dirname+ '/src/webScripts/sharedMap.jsx'
     },    
     module: {
         rules: [
@@ -15,7 +18,7 @@ const config = {
             } ,       
             {
                 test: /\.css$/i,
-                use: ["style-loader","css-loader"],
+                use: ["style-loader","css-loader",'postcss-loader'],
             },
             {
                 test: /\.(png|svg|jpg|jpeg|gif)$/i,
@@ -27,7 +30,10 @@ const config = {
         ]
     },
     resolve: {
-        extensions: ['.js', '.jsx', '.css']
+        extensions: ['.js', '.jsx', '.css'],
+        alias: {
+            react: __dirname+ '/node_modules/react'
+        }
     },
     output: {
         path: __dirname + '/src/static/dist',
