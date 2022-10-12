@@ -1,6 +1,6 @@
 
 import datetime
-import threading
+from eventlet.green import threading
 from re import U
 from data.CrimeDataManager import CrimeDataManager
 from dataModels.ActorInstruction import ActorInstruction

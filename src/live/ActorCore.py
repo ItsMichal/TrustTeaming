@@ -2,7 +2,7 @@
 # Runs the AI
 
 from dataModels.ActorInstruction import ActorInstruction
-import threading
+from eventlet.green import threading
 
 class ActorCore():
     def __init__(self, instructions, pinPlacerFunc, id = "AI"):

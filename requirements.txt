@@ -6,3 +6,4 @@ flask-socketio
 pandas
 pyarrow
 geopy
+eventlet
