@@ -136,7 +136,7 @@ function DataPanel({config, userId}){
     React.useEffect(() => {
         function updateTime(){
             if(config.timeRoundStarted != null && config.state == "running"){
-                let diff = ((new Date().getTime()) - (new Date(config.timeRoundStarted).getTime())) / 1000;
+                let diff = ((new Date().getTime()) - (new Date(config.timeRoundStarted + " UTC").getTime())) / 1000;
                 settimeRoundStarted(Math.round(diff) + "s");
             }else{
                 settimeRoundStarted("N/A");
@@ -148,7 +148,7 @@ function DataPanel({config, userId}){
         function updateTimeSync(){
             setTimeout(()=>{
                 updateTime(); 
-            }, ((new Date(config.timeRoundStarted).getMilliseconds()-new Date().getMilliseconds()+1000)%1000));
+            }, ((new Date(config.timeRoundStarted + " UTC").getMilliseconds()-new Date().getMilliseconds()+1000)%1000));
         }
         
         //The set timeout is a way to sync the local interal to the server interval

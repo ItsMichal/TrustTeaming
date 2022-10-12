@@ -1,5 +1,5 @@
 
-import datetime
+from datetime import datetime, timezone
 from eventlet.green import threading
 from re import U
 from data.CrimeDataManager import CrimeDataManager
@@ -160,7 +160,7 @@ class LiveCore(Namespace):
                             code=self.code,
                             liveExperiment=self.data,
                             aiPlaced=aiPlaced,
-                            timePlaced=datetime.datetime.now(),
+                            timePlaced=datetime.now(timezone.utc),
                             userPlaced=userId,
                             lat=lat,
                             lon=lon)
@@ -239,7 +239,7 @@ class LiveCore(Namespace):
                 user.update(ready=False)
                 user.save()
 
-        self.data.timeRoundStarted = datetime.datetime.now()
+        self.data.timeRoundStarted = datetime.now(timezone.utc)
         self.data.state = b'running'
         self.data.save()
         self.timers['roundTimer'] = threading.Timer(self.getCurRoundCfg().time, self.endRound)

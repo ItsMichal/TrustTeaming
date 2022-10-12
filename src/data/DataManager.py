@@ -11,7 +11,7 @@ from dataModels.LiveExperiment import LiveExperiment
 from dataModels.LiveUser import LiveUser
 from dataModels.Pin import Pin
 from TrustTeaming import socketio
-import datetime
+from datetime import datetime, timezone
 import os
 
 # Singleton Data Mgr class
@@ -195,7 +195,7 @@ class DataManager(object):
             else:
                 raise Exception("Live experiment already running for this config. Try with force.")
         
-        newLiveExperiment = LiveExperiment(config=target_exp, timeStarted=datetime.datetime.now())
+        newLiveExperiment = LiveExperiment(config=target_exp, timeStarted=datetime.now(timezone.utc))
         target_exp.save()
         newLiveExperiment.save()
 
