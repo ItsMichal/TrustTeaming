@@ -195,7 +195,7 @@ class DataManager(object):
             else:
                 raise Exception("Live experiment already running for this config. Try with force.")
         
-        newLiveExperiment = LiveExperiment(config=target_exp, timeStarted=datetime.now(timezone.utc).replace(tzinfo=None))
+        newLiveExperiment = LiveExperiment(config=target_exp, timeStarted=datetime.utcnow())
         target_exp.save()
         newLiveExperiment.save()
 
