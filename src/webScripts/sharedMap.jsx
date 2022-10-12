@@ -9,8 +9,6 @@ import { DefaultPanel, ReadyPanel } from "./readyUp";
 
 //TODO: Refactor out pin logic, maybe sidebar logic too?
 
-const socket = io('/shared');
-
 //globals
 var liveSocket;
 var pinColor = "green";
@@ -376,7 +374,9 @@ function init(){
 
 }
 
-socket.on('connect', ()=>{
-    console.log("Connected to " + socket.nsp);
-    init()
-});
+init();
+
+// socket.on('connect', ()=>{
+//     console.log("Connected to " + socket.nsp);
+//     init()
+// });
