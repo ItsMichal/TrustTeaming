@@ -2,7 +2,7 @@ from ast import List
 from cmath import pi
 from dataclasses import dataclass
 import dataclasses
-import datetime
+from datetime import datetime
 import os
 from time import strptime
 import pandas as pd
@@ -190,7 +190,7 @@ class CrimeDataManager(object):
 
         return {'dates': output, 'numResults': numToSample, 'maxResults': maxResults}
 
-    def getMaxRange(self) -> list[datetime.datetime]:
+    def getMaxRange(self) -> list[datetime]:
         return [min(self.crimeData['FIRST_OCCURRENCE_DATE']), max(self.crimeData['FIRST_OCCURRENCE_DATE'])]
 
     

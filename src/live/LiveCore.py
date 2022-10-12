@@ -160,7 +160,7 @@ class LiveCore(Namespace):
                             code=self.code,
                             liveExperiment=self.data,
                             aiPlaced=aiPlaced,
-                            timePlaced=datetime.now(timezone.utc),
+                            timePlaced=datetime.now(timezone.utc).replace(tzinfo=None),
                             userPlaced=userId,
                             lat=lat,
                             lon=lon)
@@ -239,7 +239,7 @@ class LiveCore(Namespace):
                 user.update(ready=False)
                 user.save()
 
-        self.data.timeRoundStarted = datetime.now(timezone.utc)
+        self.data.timeRoundStarted = datetime.now(timezone.utc).replace(tzinfo=None)
         self.data.state = b'running'
         self.data.save()
         self.timers['roundTimer'] = threading.Timer(self.getCurRoundCfg().time, self.endRound)
