@@ -1,5 +1,4 @@
 #Necessary imports
-from asyncio.log import logger
 from flask import Flask
 from flask_socketio import SocketIO, Namespace
 
