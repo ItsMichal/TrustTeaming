@@ -7,7 +7,8 @@ This webapp is the newly improved testbed for the Trust Teaming experiment condu
 
 ## Local Installation
 
-**Prerequisite**- have a [Redis instance](https://redis.io/topics/quickstart) running locally reachable on 127.0.0.1:6379. If first time running make sure db 1 is empty.
+**Prerequisite**- have a [Redis instance](https://redis.io/topics/quickstart) running locally reachable on 127.0.0.1:6379. If first time running make sure db 1 is empty. 
+
 
 1. Download or clone repo
 2. `cd` into `TrustTeaming`
@@ -15,11 +16,17 @@ This webapp is the newly improved testbed for the Trust Teaming experiment condu
 4. Run `npm install`
 5. (**Development**) Set `FLASK_ENV` environment var to `development`
 6. To start server- `npm run start`
-7. (**Development**) Use `npm run build` or `npm run dev-watch` to rebuild webpack items (.js, .jsx, .css)
-8. Visit http://127.0.0.1:5000 on participant computers. Admin login is done by entering `SHINE` as the code. 
+7. Run `npm run build`
+8. (**Development**) Use `npm run dev-watch` to rebuild webpack items (.js, .jsx, .css)
+9. Visit http://127.0.0.1:8080 on participant computers. Admin login is done by entering `SHINE` as the code. 
+
+**Important** - Make sure `eventlet` and `gevent` are not installed in your environment for now.
 
 **Warning**- Do not trust sensitive data to this program (read- passwords). This is out of scope for this testbed's responsibilities.
+
 **Note**- If using `npm` on Windows, please run `npm config set script-shell bash` so that the start script runs correctly
+
+**Note**- Sample config CSVs available under `/samples`
 
 ## Libraries used
 - See `requirements.txt` and `package.json`

@@ -1,0 +1,12 @@
+version: '3'
+services:
+    server:
+        build: .
+        ports:
+            - "8080:8080"
+        depends_on:
+            - redis
+        stdin_open: true
+        tty: true
+    redis:
+        image: redis

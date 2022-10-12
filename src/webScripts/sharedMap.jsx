@@ -162,7 +162,6 @@ function DataPanel({config, userId}){
         return () => clearInterval(interval);
     }, [config.timeRoundStarted, config.state]);
 
-    console.log(config, userId);
     let curRoundCfg =  config.curRoundCfg;//config.rounds[config.curRoundNum + "_"+userId]
 
     if(curRoundCfg == undefined) {
@@ -300,7 +299,7 @@ function updateView(){
             userPanelRoot.render(
                 <ReadyPanel
                     users={latestLiveData.users}
-                    readyHook={readyUp}>
+                    readyHook={readyReview}>
                 </ReadyPanel>
             )
         }else{

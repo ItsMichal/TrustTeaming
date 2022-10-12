@@ -12,6 +12,7 @@ from dataModels.LiveUser import LiveUser
 from dataModels.Pin import Pin
 from TrustTeaming import socketio
 import datetime
+import os
 
 # Singleton Data Mgr class
 # https://python-patterns.guide/gang-of-four/singleton/
@@ -19,6 +20,7 @@ import datetime
 class DataManager(object):
     _instance = None
     crimeDataMgr = None
+
 
     def __initializeLiveExps(self):
         all_exps = LiveExperiment.query.all()
@@ -34,7 +36,7 @@ class DataManager(object):
             self._instance = super(DataManager, self).__new__(self)
             self.crimeDataMgr : CrimeDataManager = CrimeDataManager()
             self.liveCores = {}
-            util.set_connection_settings(host="127.0.0.1", db=1) # update this to be reusable
+            util.set_connection_settings(host='localhost', port=6379) # update this to be reusable
             self._instance.__initializeLiveExps()
         return self._instance
 

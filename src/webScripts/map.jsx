@@ -77,7 +77,7 @@ export function CrimePin({lat, lon, green, offense, date, address}){
     
 
     let cirlceMarker = new L.Circle([lat, lon], {
-        radius: 400,
+        radius: 500,
         opacity: 0.15,
         fillOpacity: 0.15,
 

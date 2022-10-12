@@ -95,7 +95,6 @@ class LiveCore(Namespace):
 
     def getRoundCfg(self, roundId, userId=None) -> RoundConfig:
         if(userId is None):
-            print(self.data.users)
             userId = self.data.users[0].userId.decode()
             
         for cfg in self.data.config.roundConfigs:
@@ -217,7 +216,6 @@ class LiveCore(Namespace):
             print("Pin to be moved unsuccessfully located :(")
     
     def checkReadyToStartRound(self):
-        print(self.data.users)
         for user in self.data.users:
             if not user.ready:
                 return False
@@ -255,19 +253,26 @@ class LiveCore(Namespace):
         #TODO score calculation
         print("ENDING ROUND")
 
+        self.data.state = b'review'
+        self.data.save()
+        self.emitCurLiveData()
+
+        print("EMITTED REVIEW")
+
         (protoScores, crimesToReview) = self.scoreCore.calculateScores(self.data.curPins, self.getCurrentDate().__str__(), self.getAllowedCategories())
         print(protoScores)
         self.reviewCrimes = crimesToReview
+        self.emitCurLiveData()
+
 
         #TODO change Pin structure
         #to allow for multiple rounds
         #without having to delete
 
-        self.data.state = b'review'
-        self.data.save()
-        self.emitCurLiveData()
+        
     
     def endReview(self):
+        print("ENDING REVIEW")
         for pin in self.data.curPins:
             pin.delete()
         self.last_pinId = 0
@@ -316,18 +321,20 @@ class LiveCore(Namespace):
         print("USER READYING", req)
         if 'userId' in req:
             if(self.setUserReady(req['userId'])):
-                self.emitCurLiveData()
 
                 if(self.checkReadyToStartRound()):
                     if('review' in req and req['review']):
                         self.endReview()
                     else:
                         self.startNextRound()
-
-                if(req['userId'] in self.timers):
-                    self.timers[req['userId']].cancel()
-                self.timers[req['userId']] = threading.Timer(15.0, self.staleReady, args=(req['userId'],))
-                self.timers[req['userId']].start()
+                else:
+                    if(req['userId'] in self.timers):
+                        self.timers[req['userId']].cancel()
+                    self.timers[req['userId']] = threading.Timer(15.0, self.staleReady, args=(req['userId'],))
+                    self.timers[req['userId']].start()
+                
+                self.emitCurLiveData()
+                
     # handles pin place events
     def on_pinPlaced(self, req={}):
         print("PIN PLACED!", req)
