@@ -1,5 +1,5 @@
 
-from datetime import datetime, timezone
+from datetime import datetime
 from eventlet.green import threading
 from re import U
 from data.CrimeDataManager import CrimeDataManager
@@ -260,7 +260,19 @@ class LiveCore(Namespace):
         print("EMITTED REVIEW")
 
         (protoScores, crimesToReview) = self.scoreCore.calculateScores(self.data.curPins, self.getCurrentDate().__str__(), self.getAllowedCategories())
-        print(protoScores)
+        for userId in protoScores:
+            user = (LiveUser.query
+            .filter(userId=str(userId))
+            .filter(code=self.code)
+            .all())
+            print("SCORES")
+            combined = {self.data.curRoundNum: protoScores[userId]}
+            combined.update(user[0].scores)
+            user[0].update(scores=combined)
+            user[0].save()
+            print(user[0].scores)
+
+        #TODO protoscores to actually update user scores
         self.reviewCrimes = crimesToReview
         self.emitCurLiveData()
 
@@ -280,6 +292,7 @@ class LiveCore(Namespace):
         if(self.getRoundCfg(self.data.curRoundNum+1) is not None):
             self.data.curRoundNum += 1
         else:
+            print("ENDING EXPERIMENT!")
             self.endExperiment()
         self.data.state = b'idle'
         self.data.save()

@@ -11,7 +11,7 @@ from dataModels.LiveExperiment import LiveExperiment
 from dataModels.LiveUser import LiveUser
 from dataModels.Pin import Pin
 from TrustTeaming import socketio
-from datetime import datetime, timezone
+from datetime import datetime
 import os
 
 # Singleton Data Mgr class
