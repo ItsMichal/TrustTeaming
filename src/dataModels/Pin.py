@@ -23,10 +23,10 @@ class Pin(rom.Model):
             'pinId': self.pinId,
             'color': self.color.decode(),
             'timePlaced': str(self.timePlaced),
-            'userPlaced': self.userPlaced,
+            'userPlaced': self.userPlaced.decode(),
             'aiPlaced': self.aiPlaced,
             'deleted': self.deleted,
-            'userMoved': self.userMoved,
+            'userMoved': self.userMoved.decode(),
             'lat': self.lat,
             'lon': self.lon,
         }

@@ -50,8 +50,7 @@ export function UserPanel({userId, ready, scores}){
 
     //Get prev score
     if(Object.prototype.hasOwnProperty.call(scores, latestLiveData.curRoundCfg.roundId-1)){
-        prevScore = scores[latestLiveData.curRoundCfg.roundId
-            .roundId-1];
+        prevScore = scores[latestLiveData.curRoundCfg.roundId-1];
     }
 
     //Get total score
@@ -70,7 +69,7 @@ export function UserPanel({userId, ready, scores}){
                 </div>
                 <div className="overflow-clip">
                     <div className="uppercase text-sm text-slate-600/80">Prev. Score</div>
-                    <h3>{prevScore == 0 ? "None" : `$${prevScore}`}</h3>
+                    <h3>{prevScore == 0 ? "$0" : `$${prevScore}`}</h3>
                 </div>
                 <div className="overflow-clip">
                     <div className="uppercase text-sm text-slate-600/80">Tot. Score</div>
@@ -85,7 +84,7 @@ export function UserPanel({userId, ready, scores}){
 //and possibly showing the remaining amount of pins in each
 //color as well
 
-function ChoosePin({greenPins, redPins, pinColorHook}){
+function ChoosePin({greenPins, redPins, pinColorHook, disabled}){
     //TODO - create this
     const [pinColor, setPinColor] = useState("green");
 
@@ -118,12 +117,19 @@ function ChoosePin({greenPins, redPins, pinColorHook}){
         }
     }
 
-    return <>
-        <div className="grid grid-cols-2 gap-2 px-5 text-center font-bold">
-            <GreenBtn></GreenBtn>
-            <RedBtn></RedBtn>
+    if(disabled){
+        return  <div className="font-bold animate-pulse px-5 text-center">
+            Awaiting Round Start
         </div>
-    </>
+    }else{
+        return <>
+            <div className="grid grid-cols-2 gap-2 px-5 text-center font-bold">
+                <GreenBtn></GreenBtn>
+                <RedBtn></RedBtn>
+            </div>
+        </>
+    }
+    
 
 }
 
@@ -215,6 +221,7 @@ function onLiveData(data){
             lon={pin.lon}
             color={pin.color}
             pinHandlers={mapHandlers}
+            {...pin}
         />]
     })
 
@@ -335,7 +342,7 @@ function updateView(){
         })
         console.log(greenPins, redPins);
         pinChooserRoot.render(
-            <ChoosePin greenPins={greenPins} redPins={redPins} pinColorHook={selectColor}></ChoosePin>
+            <ChoosePin greenPins={greenPins} redPins={redPins} pinColorHook={selectColor} disabled={latestLiveData.state != "running"}></ChoosePin>
         )
     }
         

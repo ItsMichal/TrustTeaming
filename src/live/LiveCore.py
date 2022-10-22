@@ -36,7 +36,7 @@ class LiveCore(Namespace):
         self.timers = {}
         self.actor = None #only one actor at a time for now
         self.scoreCore = ScoreCore(self.crimeDataMgr)
-        self.reviewCrimes = {}
+        self.reviewCrimes = []
         #TODO: allow multiple actors if needed later on
 
         #this is used for the flask-socketio implementation
@@ -233,7 +233,8 @@ class LiveCore(Namespace):
 
     def startNextRound(self):
         print("STARTING NEXT ROUND", self.getCurRoundCfg().time)
-        self.reviewCrimes = {}
+        self.reviewCrimes = []
+
         for user in self.data.users:
             if(not user.isActor):
                 user.update(ready=False)
@@ -260,17 +261,15 @@ class LiveCore(Namespace):
         print("EMITTED REVIEW")
 
         (protoScores, crimesToReview) = self.scoreCore.calculateScores(self.data.curPins, self.getCurrentDate().__str__(), self.getAllowedCategories())
-        for userId in protoScores:
-            user = (LiveUser.query
-            .filter(userId=str(userId))
-            .filter(code=self.code)
-            .all())
-            print("SCORES")
-            combined = {self.data.curRoundNum: protoScores[userId]}
-            combined.update(user[0].scores)
-            user[0].update(scores=combined)
-            user[0].save()
-            print(user[0].scores)
+        print(protoScores)
+        for user in self.data.users:         
+            if(user.userId.decode() in protoScores):
+                combined = {self.data.curRoundNum: protoScores[user.userId.decode()]}
+            else:
+                combined = {self.data.curRoundNum: 0}
+            combined.update(user.scores)
+            user.update(scores=combined)
+            user.save()
 
         #TODO protoscores to actually update user scores
         self.reviewCrimes = crimesToReview
@@ -285,16 +284,21 @@ class LiveCore(Namespace):
     
     def endReview(self):
         print("ENDING REVIEW")
+        for user in self.data.users:
+            if(not user.isActor):
+                user.update(ready=False)
+                user.save()
+
         for pin in self.data.curPins:
             pin.delete()
         self.last_pinId = 0
 
         if(self.getRoundCfg(self.data.curRoundNum+1) is not None):
             self.data.curRoundNum += 1
+            self.data.state = b'idle'
         else:
             print("ENDING EXPERIMENT!")
             self.endExperiment()
-        self.data.state = b'idle'
         self.data.save()
         self.emitCurLiveData()
 
@@ -317,6 +321,7 @@ class LiveCore(Namespace):
             self.emitCurLiveData()
             print("STALED", userQuery[0].toJSON())
 
+
     # Client-side Live
     # CLIENT SIDE FUNCTIONS/SOCKETIO HERE
 
@@ -338,6 +343,7 @@ class LiveCore(Namespace):
                 if(self.checkReadyToStartRound()):
                     if('review' in req and req['review']):
                         self.endReview()
+                        
                     else:
                         self.startNextRound()
                 else:

@@ -1,17 +1,20 @@
 /* eslint-disable no-undef */
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
     Circle,
     FeatureGroup,
     MapContainer,
     Marker,
     TileLayer,
+    Tooltip,
     useMap,
     useMapEvent,
   } from 'react-leaflet'
 import 'leaflet';
 import greenIcon from '../assets/img/green.png';
 import redIcon from '../assets/img/red.png';
+import aiGreenIcon from '../assets/img/icons/ai_green.png';
+import aiRedIcon from '../assets/img/icons/ai_red.png';
 import shadow from '../assets/img/shadow.png';
 import {offenseToIcon} from './crimes';
 import 'leaflet.markercluster/dist/leaflet.markercluster.js'
@@ -120,21 +123,30 @@ export function ReviewMarkerGroup({pins, crimePins}){
         <CrimeMarkerGroup pins={crimePins}/>
         {
             Object.values(pins).map((pin)=> {
-                return <StaticPin key={pin.pinId} pinId={pin.pinId+"_pin"} lat={pin.lat} lon={pin.lon} color={pin.color}/>
+                return <StaticPin 
+                    key={pin.pinId} 
+                    pinId={pin.pinId+"_pin"} 
+                    lat={pin.lat} 
+                    lon={pin.lon} 
+                    color={pin.color}
+                    {...pin}/>
             })
         }
     </>
 }
 
 //For debugging
-export function StaticPin({pinId, lat, lon, color}){
+export function StaticPin({pinId, lat, lon, userMoved, userPlaced, timePlaced, aiPlaced, color}){
     // const [pos, setPos] = useState({lat:lat, lng:lon});
-    
+    let iconURLToUse = color == "green" ? greenIcon : redIcon;
+    if(aiPlaced){
+        iconURLToUse = color == "green" ? aiGreenIcon : aiRedIcon;
+    }
     let icon = new L.Icon({
-        iconUrl: color == "green" ? greenIcon : redIcon,
+        iconUrl: iconURLToUse,
         shadow: shadow,
-        iconSize: [25,41],
-        iconAnchor: [13,39],
+        iconSize: aiPlaced ? [25,61] : [25,41],
+        iconAnchor: aiPlaced ? [13, 59]: [13,39],
         // iconAnchor: [12, 41],
         // popupAnchor: [1, -34],
         shadowSize: [41, 41],
@@ -149,6 +161,8 @@ export function StaticPin({pinId, lat, lon, color}){
         position={[lat, lon]} 
         icon={icon}
         >
+            <SharedPopup pinId={pinId} userMoved={userMoved} userPlaced={userPlaced} aiPlaced={aiPlaced} timePlaced={timePlaced}/>
+
         </Marker>
         <Circle
             key={pinId+"_pinCircle"}
@@ -157,9 +171,53 @@ export function StaticPin({pinId, lat, lon, color}){
             radius={500}
             color={color == "green" ? "#4abd59" : "#bd4a4a"}
             fillColor={color == "green" ? "#4abd59" : "#bd4a4a"}
-        />
+        >
+        </Circle>
         </FeatureGroup>
             
+}
+
+
+export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced}){
+
+    
+
+    let tmzDate = new Date(timePlaced + "UTC")
+    let fmtTimeplaced = tmzDate.toLocaleTimeString();
+    let timeSincePlaced = Math.floor((Date.now() - tmzDate)/1000/60);
+    let timeSincePlacedSeconds = Math.floor(((Date.now() - tmzDate)/1000)%60);
+    let [seconds, setSeconds] = useState(timeSincePlaced);
+    let [minutes, setMinutes] = useState(timeSincePlacedSeconds);
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            setSeconds(Math.floor(((Date.now() - tmzDate)/1000)%60));
+            setMinutes(Math.floor((Date.now() - tmzDate)/1000/60));
+        }, 1000);
+
+        return () => clearInterval(interval);
+    })
+
+    return <Tooltip direction='top' offset={[0,-40]} opacity={0.9} className={'rounded-lg border-slate-800'}>
+        <div className='p-2 w-fit'>
+            <h3 className='text-center font-bold text-lg'>Pin {pinId}</h3>
+            {aiPlaced && 
+                <p className='text-center text-sm'>Placed by AI - Permanent</p>}
+            <hr className='m-2'></hr>
+            <div className='grid grid-cols-2 gap-2 text-center auto-cols-max w-48'>
+                <div className='w-fit'>
+                    <h4 className='font-bold'>Original User</h4>
+                    <p>{userPlaced}</p>
+                </div>
+                <div className='w-fit'>
+                    <h4 className='font-bold'>Last Moved By</h4>
+                    <p>{userMoved == "" ? "Nobody" : userMoved}</p>
+                </div>
+            </div>
+            <hr className='m-2'></hr>
+            <p>Updated on {fmtTimeplaced}</p>
+            <p className='font-semibold'>{minutes}m : {seconds}s ago.</p>
+        </div>
+    </Tooltip>
 }
 
 /**
@@ -173,14 +231,19 @@ export function StaticPin({pinId, lat, lon, color}){
  * @param pinHandlers The handlers, mostly used for delete and move functionality.
  * @returns 
  */
-export function SharedPin({pinId, lat, lon, color, pinHandlers}){
+export function SharedPin({pinId, lat, lon, color, userMoved, userPlaced, aiPlaced, timePlaced,  pinHandlers}){
     // const [pos, setPos] = useState({lat:lat, lng:lon});
     
+    let iconURLToUse = color == "green" ? greenIcon : redIcon;
+    if(aiPlaced){
+        iconURLToUse = color == "green" ? aiGreenIcon : aiRedIcon;
+    }
+
     let icon = new L.Icon({
-        iconUrl: color == "green" ? greenIcon : redIcon,
+        iconUrl: iconURLToUse,
         shadow: shadow,
-        iconSize: [25,41],
-        iconAnchor: [13,39],
+        iconSize: aiPlaced ? [25,61] : [25,41],
+        iconAnchor: aiPlaced ? [13, 59]: [13,39],
         // iconAnchor: [12, 41],
         // popupAnchor: [1, -34],
         shadowSize: [41, 41],
@@ -209,11 +272,17 @@ export function SharedPin({pinId, lat, lon, color, pinHandlers}){
             },
             click(e){
                 //Handle deleting marker TODO
-                pinHandlers["delete"](pinId);
-                console.log("DELETING", e);
+                if(!aiPlaced){
+                    pinHandlers["delete"](pinId);
+                    console.log("DELETING", e);
+                }
             }
+            
+            
+                
         }}
         >
+            <SharedPopup pinId={pinId} userMoved={userMoved} userPlaced={userPlaced} aiPlaced={aiPlaced} timePlaced={timePlaced}/>
             
         </Marker>
         <Circle
@@ -225,15 +294,15 @@ export function SharedPin({pinId, lat, lon, color, pinHandlers}){
             fillColor={color == "green" ? "#4abd59" : "#bd4a4a"}
             
             
-        />
+        >
+            <SharedPopup pinId={pinId} userMoved={userMoved} userPlaced={userPlaced} aiPlaced={aiPlaced} timePlaced={timePlaced}/>
+        </Circle>
         </FeatureGroup>
             
 }
 
 export function CrimeMap(props){
     return <BaseMap PinGroup={<CrimeMarkerGroup pins={props.pins}></CrimeMarkerGroup>}>
-        <StaticPin lat={39.743208} lon={-104.987390} color={"green"} pinId={"0"}></StaticPin>
-        {/* , , 400 */}
     </BaseMap>
 }
 
