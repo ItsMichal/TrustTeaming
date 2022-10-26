@@ -141,7 +141,6 @@ class DataManager(object):
 
         return returnJson
 
-    #TODO- add pins
     def getLiveExperimentJSON(self, code):
         live_exp = self.getLiveExperimentByCode(code)
 

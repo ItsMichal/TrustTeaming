@@ -136,7 +136,7 @@ export function ReviewMarkerGroup({pins, crimePins}){
 }
 
 //For debugging
-export function StaticPin({pinId, lat, lon, userMoved, userPlaced, timePlaced, aiPlaced, color}){
+export function StaticPin({pinId, lat, lon, userMoved, userPlaced, timePlaced, aiPlaced, message="", color}){
     // const [pos, setPos] = useState({lat:lat, lng:lon});
     let iconURLToUse = color == "green" ? greenIcon : redIcon;
     if(aiPlaced){
@@ -161,7 +161,14 @@ export function StaticPin({pinId, lat, lon, userMoved, userPlaced, timePlaced, a
         position={[lat, lon]} 
         icon={icon}
         >
-            <SharedPopup pinId={pinId} userMoved={userMoved} userPlaced={userPlaced} aiPlaced={aiPlaced} timePlaced={timePlaced}/>
+            <SharedPopup 
+                pinId={pinId} 
+                userMoved={userMoved} 
+                userPlaced={userPlaced} 
+                aiPlaced={aiPlaced} 
+                timePlaced={timePlaced}
+                message={message}
+            />
 
         </Marker>
         <Circle
@@ -177,8 +184,7 @@ export function StaticPin({pinId, lat, lon, userMoved, userPlaced, timePlaced, a
             
 }
 
-
-export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced}){
+export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced, message=""}){
 
     
 
@@ -188,21 +194,34 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced}
     let timeSincePlacedSeconds = Math.floor(((Date.now() - tmzDate)/1000)%60);
     let [seconds, setSeconds] = useState(timeSincePlaced);
     let [minutes, setMinutes] = useState(timeSincePlacedSeconds);
+    let tooltipShowing= false;
+
     React.useEffect(() => {
         const interval = setInterval(() => {
             setSeconds(Math.floor(((Date.now() - tmzDate)/1000)%60));
             setMinutes(Math.floor((Date.now() - tmzDate)/1000/60));
+            setTooltipState(true);
+
         }, 1000);
 
         return () => clearInterval(interval);
-    })
+    }, [tmzDate])
 
-    return <Tooltip direction='top' offset={[0,-40]} opacity={0.9} className={'rounded-lg border-slate-800'}>
-        <div className='p-2 w-fit'>
+    function InnerTooltip(){
+        return <div className='p-2 w-fit'>
             <h3 className='text-center font-bold text-lg'>Pin {pinId}</h3>
             {aiPlaced && 
                 <p className='text-center text-sm'>Placed by AI - Permanent</p>}
             <hr className='m-2'></hr>
+            {aiPlaced && 
+                <>
+                    <div>
+                        <strong>Message: </strong>
+                        {`"${message}"`}
+                    </div>
+                    <hr className='m-2'></hr>
+                </>
+            }
             <div className='grid grid-cols-2 gap-2 text-center auto-cols-max w-48'>
                 <div className='w-fit'>
                     <h4 className='font-bold'>Original User</h4>
@@ -217,7 +236,16 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced}
             <p>Updated on {fmtTimeplaced}</p>
             <p className='font-semibold'>{minutes}m : {seconds}s ago.</p>
         </div>
-    </Tooltip>
+    }
+
+    return <Tooltip 
+        direction='top' 
+        offset={[0,-40]} 
+        opacity={0.9} 
+        className={'rounded-lg border-slate-800'}>
+            <InnerTooltip></InnerTooltip>
+        </Tooltip>
+    
 }
 
 /**
@@ -231,7 +259,7 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced}
  * @param pinHandlers The handlers, mostly used for delete and move functionality.
  * @returns 
  */
-export function SharedPin({pinId, lat, lon, color, userMoved, userPlaced, aiPlaced, timePlaced,  pinHandlers}){
+export function SharedPin({pinId, lat, lon, color, userMoved, userPlaced, aiPlaced, timePlaced,message="",pinHandlers}){
     // const [pos, setPos] = useState({lat:lat, lng:lon});
     
     let iconURLToUse = color == "green" ? greenIcon : redIcon;
@@ -282,8 +310,13 @@ export function SharedPin({pinId, lat, lon, color, userMoved, userPlaced, aiPlac
                 
         }}
         >
-            <SharedPopup pinId={pinId} userMoved={userMoved} userPlaced={userPlaced} aiPlaced={aiPlaced} timePlaced={timePlaced}/>
-            
+            <SharedPopup 
+                pinId={pinId} 
+                userMoved={userMoved} 
+                userPlaced={userPlaced} 
+                aiPlaced={aiPlaced} 
+                timePlaced={timePlaced}
+                message={message}/>
         </Marker>
         <Circle
             key={pinId+"_pinCircle"}
@@ -295,7 +328,6 @@ export function SharedPin({pinId, lat, lon, color, userMoved, userPlaced, aiPlac
             
             
         >
-            <SharedPopup pinId={pinId} userMoved={userMoved} userPlaced={userPlaced} aiPlaced={aiPlaced} timePlaced={timePlaced}/>
         </Circle>
         </FeatureGroup>
             

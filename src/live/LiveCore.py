@@ -37,7 +37,6 @@ class LiveCore(Namespace):
         self.actor = None #only one actor at a time for now
         self.scoreCore = ScoreCore(self.crimeDataMgr)
         self.reviewCrimes = []
-        #TODO: allow multiple actors if needed later on
 
         #this is used for the flask-socketio implementation
         super().__init__(self.route_base+self.code)
@@ -136,7 +135,7 @@ class LiveCore(Namespace):
         return colors
 
     # Handles the creation of a pin in the DB
-    def placePin(self, lat, lon, color, userId, aiPlaced=False):
+    def placePin(self, lat, lon, color, userId, message="", aiPlaced=False):
         # print(Pin.query.filter(code=self.code))
 
         #Check for overflow
@@ -162,6 +161,7 @@ class LiveCore(Namespace):
                             aiPlaced=aiPlaced,
                             timePlaced=datetime.utcnow(),
                             userPlaced=userId,
+                            message=message,
                             lat=lat,
                             lon=lon)
 

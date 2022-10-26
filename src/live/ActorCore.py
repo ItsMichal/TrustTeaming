@@ -25,11 +25,12 @@ class ActorCore():
                     args=
                         (instruction.lat, 
                         instruction.lon, 
-                        instruction.color)
+                        instruction.color,
+                        instruction.message)
                     ).start()
                 )
 
-    def placePin(self, lat, lon, color):
+    def placePin(self, lat, lon, color, message):
         print("AI PLACING PIN!")
-        self.pinPlacer(lat, lon, color, self.id, True)
+        self.pinPlacer(lat, lon, color, self.id, message, True)
 
