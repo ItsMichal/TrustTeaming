@@ -3,6 +3,7 @@ from datetime import datetime
 from eventlet.green import threading
 from re import U
 from data.CrimeDataManager import CrimeDataManager
+from data.LogDataManager import LogDataManager
 from dataModels.ActorInstruction import ActorInstruction
 from dataModels.LiveExperiment import LiveExperiment
 from dataModels.LiveUser import LiveUser
@@ -35,6 +36,7 @@ class LiveCore(Namespace):
         self.last_pinId = 0 # used for pin ID gen
         self.timers = {}
         self.actor = None #only one actor at a time for now
+        self.logger = LogDataManager(self)
         self.scoreCore = ScoreCore(self.crimeDataMgr)
         self.reviewCrimes = []
 
@@ -54,9 +56,9 @@ class LiveCore(Namespace):
         self.initLiveUsers()
         print("Live core initialized", self.route_base+self.code)
 
-    def __del__(self):
-        print("Deleting live core")
-        super().__del__()
+    # def __del__(self):
+    #     print("Deleting live core")
+    #     super().__del__()
 
     def checkForActor(self):
         actors = ActorInstruction.query.filter(code=self.code).all()
@@ -112,9 +114,8 @@ class LiveCore(Namespace):
         return self.getCurRoundCfg(userid).target_date
 
     #Emits an updated experiment state to the clients
-    def emitCurLiveData(self, userid=None):
-        socketio.emit('sharedLiveData', 
-        {
+    def getCurLiveData(self, userid=None):
+        return {
             'timeStarted': str(self.data.timeStarted),
             'timeRoundStarted': str(self.data.timeRoundStarted),
             'state': self.data.state.decode(),
@@ -123,7 +124,11 @@ class LiveCore(Namespace):
             'curPins': {pin.pinId:pin.toJSON() for pin in self.data.curPins},
             'curRoundCfg': self.getCurRoundCfg(userid).toJSON(),
             'reviewCrimes': self.reviewCrimes,
-        }, broadcast=True, namespace=self.route_base+self.code)
+            'logs': [log.toJSON() for log in self.logger.retrieveLogs()],
+        }
+
+    def emitCurLiveData(self, userid=None):
+        socketio.emit('sharedLiveData', self.getCurLiveData(), broadcast=True, namespace=self.route_base+self.code)
 
     def countCurPinColors(self) -> dict:
         colors = {"red": 0, "green": 0}
@@ -136,7 +141,6 @@ class LiveCore(Namespace):
 
     # Handles the creation of a pin in the DB
     def placePin(self, lat, lon, color, userId, message="", aiPlaced=False):
-        # print(Pin.query.filter(code=self.code))
 
         #Check for overflow
         if(not aiPlaced):
@@ -183,6 +187,8 @@ class LiveCore(Namespace):
 
         self.emitCurLiveData()
 
+        self.logger.logEvent("pinPlaced", userId, pin=newPin)
+
         return newPin.toJSON()
 
     def deletePin(self, pinId, userId):
@@ -197,6 +203,8 @@ class LiveCore(Namespace):
             # delete
             pinToDelete[0].delete()
             print("Pin deleted successfully!")
+
+            self.logger.logEvent("pinDeleted",  userId, pinToDelete[0].userPlaced, pinToDelete[0])
         else:
             print("No pin found!!!")
 
@@ -211,6 +219,9 @@ class LiveCore(Namespace):
             pinToMove[0].update(lat=newLat, lon=newLon, userMoved=userId.encode())
             pinToMove[0].save()
             print("Pin moved!")
+
+            self.logger.logEvent("pinMoved", userId, pinToMove[0].userPlaced, pinToMove[0])
+
         else:
             #Ideally never ends up here
             print("Pin to be moved unsuccessfully located :(")
@@ -247,6 +258,8 @@ class LiveCore(Namespace):
         self.timers['roundTimer'].start()
         self.startupActorForCurRound()
         self.emitCurLiveData()
+
+        self.logger.logEvent("roundStarted", "system")
     
 
 
@@ -256,6 +269,8 @@ class LiveCore(Namespace):
 
         self.data.state = b'review'
         self.data.save()
+        self.logger.logEvent("roundEnded", "system")
+
         self.emitCurLiveData()
 
         print("EMITTED REVIEW")

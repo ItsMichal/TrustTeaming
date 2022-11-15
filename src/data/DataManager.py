@@ -149,7 +149,7 @@ class DataManager(object):
 
         returnJson = {"timeStarted": live_exp.timeStarted.isoformat(timespec='milliseconds'), "code": live_exp.config.code.decode(), 
                         "config": self.getExperimentConfigJSON(live_exp.config.code.decode()),
-                        "state": live_exp.state.decode(), "timeRoundStarted": str(live_exp.timeRoundStarted),
+                        "state": live_exp.state.decode(), "timeRoundStarted": live_exp.timeRoundStarted.isoformat(timespec='milliseconds'),
                         "curRoundNum": live_exp.curRoundNum, "users":{
                             user.userId.decode():user.toJSON() for user in live_exp.users
                          }
@@ -166,7 +166,9 @@ class DataManager(object):
 
         for exp in all_exp:
             returnJson["liveExperiments"][exp.config.code.decode()] = self.getLiveExperimentJSON(exp.config.code.decode())
-
+            returnJson["liveExperiments"][exp.config.code.decode()]["liveCore"] = self.getLiveCore(exp.config.code.decode()).getCurLiveData()
+        
+        print("RETURN JSON", returnJson)
         return returnJson
 
 
@@ -205,7 +207,7 @@ class DataManager(object):
         
         return newLiveExperiment
 
-    def getLiveCore(self, code):
+    def getLiveCore(self, code) -> LiveCore:
         if code in self.liveCores:
             return self.liveCores[code]
         else:

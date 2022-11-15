@@ -3,7 +3,7 @@ from os import name
 from socket import socket
 import sys
 from flask.helpers import url_for
-from flask import Blueprint, session
+from flask import Blueprint, Response, session
 from flask import request
 from werkzeug.utils import redirect
 from data import DataManager
@@ -37,6 +37,20 @@ class AdminCore(object):
     def logout():
         AuthCore.logout_user()
         return redirect(url_for("login.index"))
+
+    @admin_bp.route('/downloadResults', methods=['GET'])
+    @AuthCore.require_admin
+    def downloadResults():
+        if("code" in request.args):
+            dataframe = DataManager().getLiveCore(request.args.get('code')).logger.resultsToDf()
+            return Response(
+                dataframe.to_csv(),
+                mimetype="text/csv",
+                headers={"Content-disposition":
+                            "attachment; filename=results-"+request.args.get('code')+".csv"})
+        else:
+            return Response({"error":"No code provided"}, status=400)
+
 
     @admin_bp.route('/configUpload', methods=['POST'])
     def configUpload():

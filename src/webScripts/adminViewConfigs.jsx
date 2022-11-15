@@ -30,6 +30,31 @@ function stopExperiment(code){
     document.getElementById("statusHead_"+code).innerHTML = "Stopping..."
 }
 
+function UserTable({users}){
+    return <>   <br></br>
+    <br></br>
+                {Object.keys(users).map((user, index) => {
+                    return <><tr key={index} className="w-100 text-center border-gray border-b">
+                        <td className="py-2 font-bold row-span-2">User {users[user].userId}</td>
+                    </tr>
+                    <tr key={index} className="w-100 text-center border-gray border-b">
+                        <td className="py-2 font-normal">Scores</td>
+                        <td className="py-2">{
+                            Object.keys(users[user].scores).map((score, index) => {
+                                return <div key={index}>
+                                    Round {score}: {users[user].scores[score]}
+                                </div>
+                            })
+                        }
+                        </td>
+                    </tr>
+                        
+                    </>
+        
+                })}
+    </>
+}
+
 function ConfigLive(props){
     console.log(props.liveExperiment)
     if(props.liveExperiment == undefined){
@@ -44,7 +69,8 @@ function ConfigLive(props){
                         <th colSpan="2" id={"statusHead_"+props.code} className="border-b-2 font-bold p-4 dark:border-dark-5 whitespace-nowrap text-xl text-gray-900">
                             <span className="animate-pulse text-white bg-red-500 rounded-xl p-1 ml-2 text-xs">LIVE</span> 
                             Status 
-                            <button onClick={()=>stopExperiment(props.code)} className="bg-red-500 text-sm ml-2 p-2 text-white border border-b-4 border-red-600 shadow-md hover:border-red-800 active:mt-0.5 active:border-b-2 hover:bg-red-600 hover:shadow-sm active:bg-red-600 active:text-red-100  active:shadow-inner rounded-xl">
+                            <button onClick={()=>stopExperiment(props.code)} 
+                            className="bg-red-500 text-sm ml-2 p-2 text-white border border-b-4 border-red-600 shadow-md hover:border-red-800 active:mt-0.5 active:border-b-2 hover:bg-red-600 hover:shadow-sm active:bg-red-600 active:text-red-100  active:shadow-inner rounded-xl">
                                 Stop! (Destroys Data)
                             </button>
                         </th>
@@ -53,20 +79,34 @@ function ConfigLive(props){
                 <tbody>
                     
                     <tr className="w-100 text-center border-gray border-b">
-                        <td className="py-2 font-bold">Time Since Start</td>
-                        <td className="py-2">Started {DateTime.fromISO(props.liveExperiment.timeStarted).toRelative()}</td>
+                        <td className="py-2 font-bold">Time Since Initialization</td>
+                        <td className="py-2">Initialized {DateTime.fromISO(props.liveExperiment.timeStarted + " UTC").toRelative()}</td>
                     </tr>
+                    
                     <tr className="w-100 text-center border-gray border-b">
-                        <td className="py-2 font-bold">State</td>
-                        <td className="py-2">{props.liveExperiment.state}</td>
+                        <td className="py-2 font-bold">Current State</td>
+                        <td className="py-2">{props.liveExperiment.liveCore.state} </td>
                     </tr>
                     <tr className="w-100 text-center border-gray border-b">
                         <td className="py-2 font-bold">Round</td>
                         <td className="py-2">{props.liveExperiment.curRoundNum}</td>
                     </tr>
                     <tr className="w-100 text-center border-gray border-b">
-                        <td className="py-2 font-bold">Time elapsed in round</td>
-                        <td className="py-2">{props.liveExperiment.timeRoundStarted}</td>
+                        <td className="py-2 font-bold">Time Since Round Started</td>
+                        <td className="py-2">{DateTime.fromISO(props.liveExperiment.timeRoundStarted + "Z").toRelative()}</td>
+                    </tr>
+                    <tr className="w-100 text-center border-gray border-b">
+                        <td className="py-2 font-bold">Pins Placed</td>
+                        <td className="py-2">{Object.keys(props.liveExperiment.liveCore.curPins).length}</td>
+                    </tr>
+                    <UserTable users={props.liveExperiment.liveCore.users} />
+                    <tr className="w-100 text-center border-gray border-b">
+                        <td className="py-2 font-bold">Download Logged Results</td>
+                        <td className='py-4'>
+                            <a href={`downloadResults?code=${props.liveExperiment.code}`} className="bg-blue-500 p-1 text-white border border-b-4 border-blue-600 shadow-md hover:border-blue-800 active:mt-0.5 active:border-b-2 hover:bg-blue-600 hover:shadow-sm active:bg-blue-600 active:text-blue-100  active:shadow-inner rounded-xl">
+                                Download
+                            </a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -74,6 +114,8 @@ function ConfigLive(props){
     }
     
 }
+
+
 
 function startExperiment(code){
     socket.emit("sendStart", {"code":code});    
