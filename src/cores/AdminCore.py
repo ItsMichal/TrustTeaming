@@ -29,7 +29,8 @@ class AdminCore(object):
             session['configMsg'] = ""
         return AdminView.DefaultAdminView(session['user_id'], config_msg=configMsg)
 
-    @admin_bp.route('/')  
+    @admin_bp.route('/', endpoint='index')  
+    @AuthCore.require_admin
     def index():
         return AdminCore.adminPortal()
 
@@ -38,7 +39,7 @@ class AdminCore(object):
         AuthCore.logout_user()
         return redirect(url_for("login.index"))
 
-    @admin_bp.route('/downloadResults', methods=['GET'])
+    @admin_bp.route('/downloadResults', methods=['GET'], endpoint='downloadResults')
     @AuthCore.require_admin
     def downloadResults():
         if("code" in request.args):
@@ -52,7 +53,19 @@ class AdminCore(object):
             return Response({"error":"No code provided"}, status=400)
 
 
-    @admin_bp.route('/configUpload', methods=['POST'])
+    @admin_bp.route('/deleteExperiment', methods=['POST'], endpoint='deleteExperiment')
+    @AuthCore.require_admin
+    def deleteExperiment():
+        print("DELETING")
+        print(request.get_json()['code'])
+        if("code" in request.get_json()):
+            DataManager().deleteExperimentConfig(request.get_json()['code'])
+            return Response({"success":"Deleted experiment"}, status=200)
+        else:
+            return Response({"error":"No code provided"}, status=400)
+
+    @admin_bp.route('/configUpload', methods=['POST'], endpoint='configUpload')
+    @AuthCore.require_admin
     def configUpload():
         csvConfig = request.files.get('config')
         code = request.form.get('code')
@@ -94,7 +107,8 @@ class AdminCore(object):
         session['configMsg'] = "Success! " + code + " now ready for use."
         return redirect(url_for('admin.index'))
 
-    @admin_bp.route('/instructionsUpload', methods=['POST'])
+    @admin_bp.route('/instructionsUpload', methods=['POST'], endpoint='instructionsUpload')
+    @AuthCore.require_admin
     def instructionUpload():
         csvConfig = request.files.get('config')
         code = request.form.get('code')

@@ -200,8 +200,6 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced,
         const interval = setInterval(() => {
             setSeconds(Math.floor(((Date.now() - tmzDate)/1000)%60));
             setMinutes(Math.floor((Date.now() - tmzDate)/1000/60));
-            setTooltipState(true);
-
         }, 1000);
 
         return () => clearInterval(interval);
@@ -213,10 +211,11 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced,
             {aiPlaced && 
                 <p className='text-center text-sm'>Placed by AI - Permanent</p>}
             <hr className='m-2'></hr>
+            
             {aiPlaced && 
                 <>
-                    <div>
-                        <strong>Message: </strong>
+                    <div className='w-lg whitespace-normal'>
+                        <b>Message: </b>
                         {`"${message}"`}
                     </div>
                     <hr className='m-2'></hr>
