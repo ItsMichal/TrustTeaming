@@ -1,5 +1,4 @@
 #Necessary imports
-from asyncio.log import logger
 from flask import Flask
 from flask_socketio import SocketIO, Namespace
 
@@ -22,10 +21,6 @@ def startWebserver(debug=False):
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'shinelabnotverysecret'
 
-    import logging
-    log = logging.getLogger('werkzeug')
-    log.setLevel(logging.ERROR)
-
     #Start AuthCore and data manager
     AuthCore()
     DataManager()
@@ -46,4 +41,6 @@ def startWebserver(debug=False):
     if(not debug):
         socketio.run(app)
     else:
-        socketio.run(app, log_output=True, port=8080, debug=True, use_reloader=True)
+        socketio.run(app, host="0.0.0.0", log_output=False, 
+        port=8080,
+         debug=True, use_reloader=True)

@@ -3,18 +3,20 @@
         <title>Trust Teaming</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <script src="https://cdn.tailwindcss.com/"></script>
         <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script>
+        <script src="/static/dist/global.css"></script>
     </head>
     <body class="bg-gray-300 flex flex-col  content-center items-center" >
         <div class="self-center container p-20 mt-20 rounded-2xl bg-gray-100">
-            <div class="text-3xl">Welcome to Trust Teaming <small class="uppercase text-sm text-gray-400">Beta v2021.12</small></div>
+            <div class="text-3xl">Welcome to Trust Teaming <small class="uppercase text-sm text-gray-400">Beta v2022.11</small></div>
             <div class="text-2xl font-light">Please choose a view, user {{user_id}}</div>
             <br>
             <a href={{url_for("trust.crime.index")}}>
                 <button class="button px-10 py-5 rounded-xl text-lg bg-blue-500 text-white">Crime</button>
             </a>
-            
+            <a href={{url_for("trust.shared.index")}}>
+                <button class="button px-10 py-5 rounded-xl text-lg bg-blue-500 text-white">Shared</button>
+            </a>
             <div id="errormsg" class="text-red-500 text-xl">{{errorMsg}}</div>
         </div>
     </body>

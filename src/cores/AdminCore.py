@@ -3,10 +3,11 @@ from os import name
 from socket import socket
 import sys
 from flask.helpers import url_for
-from flask import Blueprint, session
+from flask import Blueprint, Response, session
 from flask import request
 from werkzeug.utils import redirect
 from data import DataManager
+from util.csvToActorInstructions import csvToActorInstructions
 
 sys.path.append("..") #python bs
 from views import AdminView
@@ -36,6 +37,20 @@ class AdminCore(object):
     def logout():
         AuthCore.logout_user()
         return redirect(url_for("login.index"))
+
+    @admin_bp.route('/downloadResults', methods=['GET'])
+    @AuthCore.require_admin
+    def downloadResults():
+        if("code" in request.args):
+            dataframe = DataManager().getLiveCore(request.args.get('code')).logger.resultsToDf()
+            return Response(
+                dataframe.to_csv(),
+                mimetype="text/csv",
+                headers={"Content-disposition":
+                            "attachment; filename=results-"+request.args.get('code')+".csv"})
+        else:
+            return Response({"error":"No code provided"}, status=400)
+
 
     @admin_bp.route('/configUpload', methods=['POST'])
     def configUpload():
@@ -79,6 +94,34 @@ class AdminCore(object):
         session['configMsg'] = "Success! " + code + " now ready for use."
         return redirect(url_for('admin.index'))
 
+    @admin_bp.route('/instructionsUpload', methods=['POST'])
+    def instructionUpload():
+        csvConfig = request.files.get('config')
+        code = request.form.get('code')
+        forceRaw = request.form.get('force')
+        force = forceRaw is not None
+        
+        if code is None or code == '':
+            session['configMsg'] = "You should never see this!"
+            return redirect(url_for('admin.index'))
+
+        if csvConfig is None or csvConfig.content_type == "application/octet-stream":
+            session['configMsg'] = "No file received by server!"
+            return redirect(url_for('admin.index'))
+
+        if csvConfig.content_type != "text/csv" and csvConfig.content_type != "application/vnd.ms-excel":
+            session['configMsg'] = "Not a valid CSV file! (Also check Redis server)"
+            return redirect(url_for('admin.index'))
+        
+        try:
+            csvToActorInstructions(csvConfig, code)
+        except BaseException as err:
+            session['configMsg'] = err.__str__()
+            return redirect(url_for('admin.index')) 
+
+        session['configMsg'] = "Success! " + code + "'s AI instructions now ready for use."
+        return redirect(url_for('admin.index'))
+
     @admin_bp.route('/getConfig', methods=['GET', 'POST'])
     def getConfig():
         return DataManager().getExperimentsJSON()
@@ -90,8 +133,8 @@ class AdminCore(object):
     @socketio.on('sendStart', namespace=route_base)
     def requestStartLive(req={}):
         if("code" in req):
-            newExp = DataManager().initializeExperiment(req["code"])
-            print(newExp)
+            DataManager().initializeExperiment(req["code"])
+            # print(newExp)
         else:
             print("No attr!")
 

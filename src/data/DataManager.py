@@ -2,14 +2,17 @@ import json
 import redis
 
 from rom import util
+from dataModels.ActorInstruction import ActorInstruction
 from live.LiveCore import LiveCore
 from data.CrimeDataManager import CrimeDataManager
 from dataModels.ExperimentConfig import ExperimentConfig
 from dataModels.RoundConfig import RoundConfig
 from dataModels.LiveExperiment import LiveExperiment
+from dataModels.LiveUser import LiveUser
 from dataModels.Pin import Pin
 from TrustTeaming import socketio
-import datetime
+from datetime import datetime
+import os
 
 # Singleton Data Mgr class
 # https://python-patterns.guide/gang-of-four/singleton/
@@ -18,11 +21,12 @@ class DataManager(object):
     _instance = None
     crimeDataMgr = None
 
+
     def __initializeLiveExps(self):
         all_exps = LiveExperiment.query.all()
 
         for exp in all_exps:
-            new_core = LiveCore(exp)
+            new_core = LiveCore(self.crimeDataMgr, exp)
             self.liveCores[exp.config.code.decode()] = new_core
             socketio.on_namespace(new_core)
 
@@ -30,12 +34,17 @@ class DataManager(object):
         if self._instance is None:
             print("Creating Experiment Config")
             self._instance = super(DataManager, self).__new__(self)
-            self.crimeDataMgr = CrimeDataManager()
+            self.crimeDataMgr : CrimeDataManager = CrimeDataManager()
             self.liveCores = {}
-            util.set_connection_settings(host="127.0.0.1", db=1) # update this to be reusable
+            util.set_connection_settings(host='localhost', port=6379) # update this to be reusable
             self._instance.__initializeLiveExps()
         return self._instance
 
+    #TODO homogenize this logic with the rest of the code
+    # def createActorInstructions(self, code, instructions : list(ActorInstruction)):
+    #     exp = self.getExperimentByCode(code)
+    #     exp.liveExperiment.actor_instructions = instructions
+    #     exp.liveExperiment.save()
 
     def createRoundConfig(self, user_id, code, round_id, layers, question, time, target_date, max_red, max_green, force=False):
         try:
@@ -59,7 +68,7 @@ class DataManager(object):
         try:
             if(force):
                 oldExperiment = self.getExperimentByCode(code)
-                print(oldExperiment)
+                # print(oldExperiment)
                 if(oldExperiment is not None):
                     oldExperiment.delete()
             
@@ -72,6 +81,13 @@ class DataManager(object):
             print(err)
             raise err
     
+    # def createInstructionsForExperiment(self, code, instructions):
+    #     exp = self.getExperimentByCode(code)
+
+
+    #     exp.liveExperiment.actor_instructions = instructions
+    #     exp.liveExperiment.save()
+
     def getExperimentByCode(self, code) -> ExperimentConfig:
         try:
             getExperimentRelatedToCode = ExperimentConfig.get_by(code=code.encode())
@@ -83,8 +99,7 @@ class DataManager(object):
     def getLiveExperimentByCode(self, code) -> LiveExperiment:
         try:
             getExperimentRelatedToCode = ExperimentConfig.get_by(code=code.encode())
-            print(getExperimentRelatedToCode.live_experiment)
-            return getExperimentRelatedToCode.live_experiment
+            return getExperimentRelatedToCode.liveExperiment
         except BaseException as err:
             print(err)
             return None
@@ -92,7 +107,7 @@ class DataManager(object):
     def getRoundConfig(self, user_id, code, round_id):
         try:
             getRoundCfg = RoundConfig.query.filter(user_id=user_id).filter(round_id=round_id).filter(code=code).first()
-            print(getRoundCfg)
+            # print(getRoundCfg)
             return getRoundCfg
         except BaseException as err:
             print(err)
@@ -103,12 +118,12 @@ class DataManager(object):
         exp = self.getExperimentByCode(code)
         code = exp.code.decode()
         valid_uids = exp.valid_uids
-        rounds = []
-
-        for rnd in exp.roundConfigs:
-            rounds.append({"round_id":rnd.round_id, "user_id":rnd.user_id, "question":rnd.question.decode()})
+       
+        # rounds = []
+        # for rnd in exp.roundConfigs:
+        #     rounds.append({"round_id":rnd.round_id, "user_id":rnd.user_id, "question":rnd.question.decode()})
         
-        returnJson = {"code":code, "valid_uids":valid_uids, "rounds":rounds}
+        returnJson = {"code":code, "valid_uids":valid_uids, "rounds":{str(rnd.round_id)+"_"+str(rnd.user_id):rnd.toJSON() for rnd in exp.roundConfigs}}
         
         return returnJson
 
@@ -121,34 +136,44 @@ class DataManager(object):
         for exp in all_exps:
             code = exp.code.decode()
             valid_uids = exp.valid_uids
-            rounds = []
-
-            for rnd in exp.roundConfigs:
-                rounds.append({"round_id":rnd.round_id, "user_id":rnd.user_id, "question":rnd.question.decode()})
-            returnJson["configs"].append({"code":code, "valid_uids":valid_uids, "rounds":rounds})
+            
+            returnJson["configs"].append({"code":code, "valid_uids":valid_uids, "rounds":[rnd.toJSON() for rnd in exp.roundConfigs]})
 
         return returnJson
 
-    #TODO- add pins
     def getLiveExperimentJSON(self, code):
         live_exp = self.getLiveExperimentByCode(code)
 
+        if live_exp is None:
+            return None
+        
+        print("HEEEERE")
 
-        returnJson = {"time_started": live_exp.time_started.isoformat(timespec='milliseconds'), "code": live_exp.config.code.decode(), 
+        returnJson = {"timeStarted": live_exp.timeStarted.isoformat(timespec='milliseconds') if live_exp.timeStarted is not None else "", 
+                        "code": live_exp.config.code.decode(), 
                         "config": self.getExperimentConfigJSON(live_exp.config.code.decode()),
-                        "state": live_exp.state.decode(), "timeInRound": live_exp.timeInRound,
-                        "curRoundNum": live_exp.curRoundNum, "users":live_exp.users}        
+                        "state": live_exp.state.decode(), 
+                        "timeRoundStarted": live_exp.timeRoundStarted.isoformat(timespec='milliseconds') if live_exp.timeRoundStarted is not None else "",
+                        "curRoundNum": live_exp.curRoundNum, "users":{
+                            user.userId.decode():user.toJSON() for user in live_exp.users
+                         }
+                        }
+
+                        #TODO - update users above^^^   
         
         return returnJson
 
     def getLiveExperimentsJSON(self):
         all_exp = LiveExperiment.query.all()
 
-        returnJson = {"live_experiments":{}}
+        returnJson = {"liveExperiments":{}}
 
         for exp in all_exp:
-            returnJson["live_experiments"][exp.config.code.decode()] = self.getLiveExperimentJSON(exp.config.code.decode())
-
+            print(exp)
+            returnJson["liveExperiments"][exp.config.code.decode()] = self.getLiveExperimentJSON(exp.config.code.decode())
+            returnJson["liveExperiments"][exp.config.code.decode()]["liveCore"] = self.getLiveCore(exp.config.code.decode()).getCurLiveData()
+        
+        print("RETURN JSON", returnJson)
         return returnJson
 
 
@@ -157,10 +182,11 @@ class DataManager(object):
     # TODO- add save feature once logging implemented
     def stopExperiment(self, code):
         if code in self.liveCores:
-            self.liveCores.pop(code)
+            oldLive = self.liveCores.pop(code)
+            del oldLive
 
         target_exp = self.getExperimentByCode(code)
-        target_exp.live_experiment.delete()
+        target_exp.liveExperiment.delete()
         target_exp.save(force=True)
 
 
@@ -169,21 +195,24 @@ class DataManager(object):
         target_exp = self.getExperimentByCode(code)
 
         #Check if exp exists, and stop or abort according to force
-        print(target_exp.live_experiment)
-        if(target_exp.live_experiment is not None):
+        if(target_exp.liveExperiment is not None):
             if(force):
                 self.stopExperiment(code)
             else:
                 raise Exception("Live experiment already running for this config. Try with force.")
         
-        newLiveExperiment = LiveExperiment(config=target_exp, time_started=datetime.datetime.now())
+        newLiveExperiment = LiveExperiment(config=target_exp, timeStarted=datetime.utcnow())
+        target_exp.save()
         newLiveExperiment.save()
 
-        self.liveCores[code] = LiveCore(newLiveExperiment);
+
+        self.liveCores[code] = LiveCore(self.crimeDataMgr, newLiveExperiment);
+        socketio.on_namespace(self.liveCores[code])
+
         
         return newLiveExperiment
 
-    def getLiveCore(self, code):
+    def getLiveCore(self, code) -> LiveCore:
         if code in self.liveCores:
             return self.liveCores[code]
         else:

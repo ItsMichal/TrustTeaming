@@ -3,6 +3,7 @@ from datetime import datetime
 import json
 from werkzeug.datastructures import FileStorage
 import io
+from ast import literal_eval
 from data import DataManager
 
 from dataModels.RoundConfig import RoundConfig
@@ -41,7 +42,8 @@ def csvToDataModel(file : FileStorage, code : str, force : bool = False):
         experimentInst.save()
 
         round_num = int(row[1])
-        layers = json.loads(row[2])
+        layers = literal_eval(row[2])
+        print(layers)
         question = row[3]
         time = int(row[4])
         date = datetime.strptime(row[5], "%m/%d/%Y")

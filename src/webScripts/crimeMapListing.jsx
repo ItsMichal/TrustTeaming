@@ -1,20 +1,26 @@
-
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {createRoot} from 'react-dom/client';
 import { io } from "socket.io-client";
 import { DateRange } from 'react-date-range';
 import {useState} from 'react'
 import 'react-date-range/dist/styles.css'; // main style file
 import '../assets/css/cal.css'; // theme css file
-import { CrimeMap, Pin } from "./map";
-import {offenses, offenseToIcon, offensesToReadable} from "./crimes"
-
+import '../assets/css/global.css' //global tailwind theme
+import { CrimeMap, CrimePin } from "./map";
+import {offenseToIcon, offensesToReadable, offenseToColor} from "./crimes"
 //Import images
-
-var liveSocket;
-
 const socket = io('/crime');
 
+var liveSocket;
+var crimesListGlobal = [];
+var startGlobal;
+var endGlobal;
+var blockedDate;
+
+const mapRenderer = createRoot(document.getElementById("map"));
+const datePickerRenderer = createRoot(document.getElementById("datepicker"));
+const statRenderer = createRoot(document.getElementById("stat"));
+const filterRenderer = createRoot(document.getElementById("filter"));
 
 socket.on('connect', ()=>{
     console.log("Connected to " + socket.nsp);
@@ -55,6 +61,7 @@ function CrimeTypePicker({crimeList, updateCrimeList}){
     return <div className="p-4">
         {crimeList.map((crime) => {
             return <CrimeSelect
+            key={crime}
             crimeName={crime}
             toggleCrime={(val)=>{
                 if(val && !crimesSelected.includes(crime)){
@@ -88,7 +95,6 @@ function getStartEnd(){
 }
 
 
-
 function getPins(start, end, categories) {
     
     return fetch('/trust/crime/requestPins', {
@@ -103,9 +109,6 @@ function getPins(start, end, categories) {
         method: 'POST'
     }).then(response => {return response.json();}).then((respJson) => {
         return respJson;
-
-
-
     }).catch((err) => {
         console.log(err);
     });
@@ -117,31 +120,28 @@ function rerenderMapView(start, end, categories){
     getPins(new Date(start), new Date(end), categories).then(crimesJson => {
         console.log(crimesJson);
         let pins = crimesJson.dates.map((crime) => {
-            return <Pin 
-            key={crime.index} 
-            lat={crime.geoLat} 
-            lon={crime.geoLon} 
-            green={!crime.isCrime}
-            date={crime.firstOccuranceDate}
-            offense={crime.offsenseCategoryId}
-            address={crime.incidentAddress}
-            >
-            </Pin>
+            return CrimePin({
+                key:crime.index,
+                lat:crime.geoLat, 
+                lon:crime.geoLon, 
+                green: offenseToColor[crime.offsenseCategoryId],
+                date:crime.firstOccuranceDate,
+                offense:crime.offsenseCategoryId,
+                address:crime.incidentAddress
+            });
         });
-        ReactDOM.render(
+        statRenderer.render(
             <StatView
             number={pins.length}
-            max={crimesJson.maxResults}></StatView>,
-            document.getElementById("stat")
+            max={crimesJson.maxResults}></StatView>
         )
-        ReactDOM.render(
-            <CrimeMap pins={pins}></CrimeMap>,
-            document.getElementById("map")
+        mapRenderer.render(
+            <CrimeMap pins={pins}></CrimeMap>
         );
     })
 }
 
-function DatePicker({min, max, startEnd, changeCallback}){
+function DatePicker({min, max, startEnd, blockedDate, changeCallback}){
     const [state, setState] = useState([
         {
         startDate: min,
@@ -150,14 +150,14 @@ function DatePicker({min, max, startEnd, changeCallback}){
         }
     ]);
 
-    return <div className="flex flex-row">
+    return <><div className="flex flex-row">
         <div className="flex-grow"></div>
         <DateRange
             minDate={min}
             maxDate={max}
             shownDate={min}
-            editableDateInputs={true}
             ranges={state}
+            disabledDates={[blockedDate]}
             onChange={(item)=>{
                 setState([item.selection]);
                 startGlobal = item.selection.startDate;
@@ -168,6 +168,10 @@ function DatePicker({min, max, startEnd, changeCallback}){
         className="bg-stone-300 rounded-xl"></DateRange>
         <div className="flex-grow"></div>
     </div>
+    <div className="w-full text-center">
+        <b>Warning:</b> {blockedDate.toDateString()} is now disabled.
+    </div>
+    </>
 }
 
 function dateToString(date){
@@ -175,7 +179,7 @@ function dateToString(date){
 }
 
 function StatView({number, max}){
-    let randSamp = number == 200;
+    let randSamp = number == 500;
 
     console.log(randSamp);
 
@@ -188,49 +192,65 @@ function StatView({number, max}){
     </div>)
 }
 
-var crimesListGlobal = [];
-var startGlobal;
-var endGlobal;
+
 
 
 function renderCrimeView(){
-    ReactDOM.render(
+    statRenderer.render(
         <StatView
         number={0}
-        max={0}></StatView>,
-        document.getElementById("stat")
+        max={0}></StatView>
     )
 
-    ReactDOM.render(
+    filterRenderer.render(
         <CrimeTypePicker
-            crimeList={offenses}
+            crimeList={[]}
             updateCrimeList={(list)=>{crimesListGlobal=list; rerenderMapView(startGlobal, endGlobal, list);}}
         >
-        </CrimeTypePicker>,
-        document.getElementById("filter")
+        </CrimeTypePicker>
     );
 
     getStartEnd().then(response=>{
-        liveSocket = io('/live_' + response.code);
+        liveSocket = io('/live' + response.code);
 
         liveSocket.on('connect', ()=>{
             console.log("Connected to " + liveSocket.nsp);
-            liveSocket.emit('crimeLiveConfig', {});
+            liveSocket.emit('crimeLiveConfig', {userId: response.userId});
         });
 
-        console.log(response);
+        liveSocket.on('liveCfg', (data) => {
+            console.log("WOW GOT A RESPONSE");
+            console.log(data);
+            blockedDate = data.curDate;
+            datePickerRenderer.render(
+                <DatePicker
+                    min={new Date(response.startDate)}
+                    max={new Date(response.endDate)}
+                    blockedDate={new Date(blockedDate)}
+                    startEnd={startPlusOne}
+                    changeCallback={rerenderMapView}
+                ></DatePicker>
+            );
+            filterRenderer.render(
+                <CrimeTypePicker
+                    crimeList={data.categories}
+                    updateCrimeList={(list)=>{crimesListGlobal=list; rerenderMapView(startGlobal, endGlobal, list);}}
+                >
+                </CrimeTypePicker>
+            );
+        })
+
         let startPlusOne = new Date(response.startDate);
         startPlusOne.setDate(startPlusOne.getDate() + 1);
         startGlobal = new Date(response.startDate);
         endGlobal = startPlusOne;
-        ReactDOM.render(
+        datePickerRenderer.render(
             <DatePicker
                 min={new Date(response.startDate)}
                 max={new Date(response.endDate)}
                 startEnd={startPlusOne}
                 changeCallback={rerenderMapView}
-            ></DatePicker>,
-            document.getElementById("datepicker")
+            ></DatePicker>
         );
         
         // getPins(new Date(response.startDate), startPlusOne).then((crimesJson) => {
@@ -247,9 +267,8 @@ function renderCrimeView(){
         //         </Pin>
         //     });
 
-        ReactDOM.render(
-            <CrimeMap pins={[]}></CrimeMap>,
-            document.getElementById("map")
+        mapRenderer.render(
+            <CrimeMap pins={[]}></CrimeMap>
         );
         // })
 

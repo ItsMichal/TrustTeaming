@@ -24,7 +24,7 @@ class AuthCore(object):
         else:
             session['auth'] = False
 
-    def get_user():
+    def get_user(self = None):
         if 'user_id' in session and 'code' in session and 'auth' in session:
             return AuthUser(session['user_id'], session['code'], session['auth'])
         else:
