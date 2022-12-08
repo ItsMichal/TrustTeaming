@@ -194,7 +194,7 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced,
     let timeSincePlacedSeconds = Math.floor(((Date.now() - tmzDate)/1000)%60);
     let [seconds, setSeconds] = useState(timeSincePlaced);
     let [minutes, setMinutes] = useState(timeSincePlacedSeconds);
-    let tooltipShowing= false;
+    // let tooltipShowing= false;
 
     React.useEffect(() => {
         const interval = setInterval(() => {

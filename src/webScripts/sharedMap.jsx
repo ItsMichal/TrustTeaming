@@ -334,11 +334,14 @@ function updateView(){
         let greenPins = latestLiveData.curRoundCfg.maxGreen;
         let redPins = latestLiveData.curRoundCfg.maxRed;
         latestLiveData != undefined && (Object.values(latestLiveData.curPins)).forEach((pin) => {
-            if(pin.color == "green"){
-                greenPins--;
-            }else if(pin.color == "red"){
-                redPins--;
+            if(!pin.aiPlaced){
+                if(pin.color == "green"){
+                    greenPins--;
+                }else if(pin.color == "red"){
+                    redPins--;
+                }
             }
+
         })
         console.log(greenPins, redPins);
         pinChooserRoot.render(
