@@ -123,9 +123,45 @@ function startExperiment(code){
 }
 
 function ConfigTable(props){
-    console.log(props);
+    //Sends a post request to /deleteExperiment with the code of the experiment to delete
+    function deleteExperiment(code){
+        console.log("Deleting code: " + code + "");
+
+        //Display a warning popup
+        if(!confirm("Are you sure you want to delete this experiment?")){
+            return;
+        }
+
+        fetch("deleteExperiment", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"code":code})
+        }).then((res)=>{
+            if(res.status == 200){
+                //refresh page
+                window.location.reload();
+                console.log("Deleted")
+            }else{
+                console.log("Error deleting")
+            }
+        });
+    }
+
     return <div className="bg-white shadow rounded-lg p-5 my-5">
-        <h2 className="font-bold text-xl border-b-2 pb-3"><small className="text-gray-500">CODE: </small>{props.code}</h2>
+        <div className='flex flex-row border-b-2 pb-3'>
+            <h2 className="font-bold text-xl"><small className="text-gray-500">CODE: </small>{props.code}</h2>
+            <div className='flex-grow'></div>
+            <div className="bg-red-500 p-2 
+            text-white border border-b-4 border-red-600 
+            shadow-md hover:border-red-800 active:mt-0.5 
+            active:border-b-2 hover:bg-red-600 hover:shadow-sm 
+            active:bg-red-600 active:text-red-100  
+            active:shadow-inner rounded-xl" onClick={()=>{deleteExperiment(props.code)}}>
+                Delete Experiment!
+            </div>
+        </div>
         <ConfigLive liveExperiment={props.liveExperiment} code={props.code}></ConfigLive>
         <div className="bg-gray-100 shadow rounded-lg p-5 my-5">
             <ConfigAccordion topElement={<h3 className="border-b-2 py-1 text-center text-xl font-bold">

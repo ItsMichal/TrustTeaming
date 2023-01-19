@@ -81,12 +81,17 @@ class DataManager(object):
             print(err)
             raise err
     
-    # def createInstructionsForExperiment(self, code, instructions):
-    #     exp = self.getExperimentByCode(code)
-
-
-    #     exp.liveExperiment.actor_instructions = instructions
-    #     exp.liveExperiment.save()
+    def deleteExperimentConfig(self, code):
+        try:
+            oldExperiment = self.getExperimentByCode(code)
+            if(oldExperiment is not None):
+                oldExperiment.delete()
+        except AttributeError as ater:
+            print("Could not delete experiment data - AttrError " ,ater)
+            raise ater
+        except BaseException as err:
+            print(err)
+            raise err
 
     def getExperimentByCode(self, code) -> ExperimentConfig:
         try:

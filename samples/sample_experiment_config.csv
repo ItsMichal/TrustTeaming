@@ -1,7 +1,7 @@
 User ID (Int),Round Num/ID (Int),Layers (JSON),Question (String),Time (Seconds),Target Date (Date),Max. Red Pins (Int),Max. Green Pins (Int)
-1,1,"['drug-alcohol', 'theft-from-motor-vehicle', 'traffic-accident', 'murder', 'arson', 'robbery', 'burglary', 'auto-theft', 'aggravated-assault', 'larceny']",Did this update?,25,09/25/2017,8,8
-1,2,"['theft-from-motor-vehicle', 'larceny', 'drug-alcohol', 'aggravated-assault', 'burglary']",Place them a little better,20,09/26/2018,8,8
-1,3,"['drug-alcohol', 'theft-from-motor-vehicle', 'traffic-accident', 'murder', 'arson', 'robbery', 'burglary', 'auto-theft', 'aggravated-assault', 'larceny']",Place them!!!,15,09/27/2018,8,8
-2,1,"['drug-alcohol', 'theft-from-motor-vehicle', 'traffic-accident', 'murder', 'arson', 'robbery', 'burglary', 'auto-theft', 'aggravated-assault', 'larceny']",Place the pins,25,09/25/2017,8,8
-2,2,"['theft-from-motor-vehicle', 'larceny', 'drug-alcohol', 'aggravated-assault', 'burglary']",Place them a little better,20,09/26/2018,8,8
+1,1,"['drug-alcohol', 'theft-from-motor-vehicle', 'traffic-accident', 'murder', 'arson', 'robbery', 'burglary', 'auto-theft', 'aggravated-assault', 'larceny']",Did this update?,30,9/25/2017,8,8
+1,2,"['theft-from-motor-vehicle', 'larceny', 'drug-alcohol', 'aggravated-assault', 'burglary']",Place them a little better,30,9/26/2018,8,8
+1,3,"['drug-alcohol', 'theft-from-motor-vehicle', 'traffic-accident', 'murder', 'arson', 'robbery', 'burglary', 'auto-theft', 'aggravated-assault', 'larceny']",Place them!!!,15,9/27/2018,8,8
+2,1,"['drug-alcohol', 'theft-from-motor-vehicle', 'traffic-accident', 'murder', 'arson', 'robbery', 'burglary', 'auto-theft', 'aggravated-assault', 'larceny']",Place the pins,30,9/25/2017,8,8
+2,2,"['theft-from-motor-vehicle', 'larceny', 'drug-alcohol', 'aggravated-assault', 'burglary']",Place them a little better,30,9/26/2018,8,8
 2,3,"['drug-alcohol', 'theft-from-motor-vehicle', 'traffic-accident', 'murder', 'arson', 'robbery', 'burglary', 'auto-theft', 'aggravated-assault', 'larceny']",Place them!!!,15,9/27/2018,8,8
