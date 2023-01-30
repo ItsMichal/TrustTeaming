@@ -169,7 +169,6 @@ export function StaticPin({pinId, lat, lon, userMoved, userPlaced, timePlaced, a
                 timePlaced={timePlaced}
                 message={message}
             />
-
         </Marker>
         <Circle
             key={pinId+"_pinCircle"}
@@ -194,16 +193,21 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced,
     let timeSincePlacedSeconds = Math.floor(((Date.now() - tmzDate)/1000)%60);
     let [seconds, setSeconds] = useState(timeSincePlaced);
     let [minutes, setMinutes] = useState(timeSincePlacedSeconds);
+    const [forcePopup, setForcePopup] = useState(aiPlaced && (seconds < 5 && minutes < 1));
     // let tooltipShowing= false;
 
     React.useEffect(() => {
         const interval = setInterval(() => {
             setSeconds(Math.floor(((Date.now() - tmzDate)/1000)%60));
             setMinutes(Math.floor((Date.now() - tmzDate)/1000/60));
+            if((seconds > 5 || minutes > 1) && forcePopup){
+                    setForcePopup(false);
+            }
+           
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [tmzDate])
+    }, [forcePopup, minutes, seconds, tmzDate])
 
     function InnerTooltip(){
         return <div className='p-2 w-fit'>
@@ -237,15 +241,84 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced,
         </div>
     }
 
-    return <Tooltip 
+    if(forcePopup){
+        return <Tooltip
+            key={pinId+"_tooltip_force" }
+            direction='top' 
+            offset={[0,-40]} 
+            opacity={0.9} 
+            permanent={true}
+            className={'rounded-lg border-slate-800'}>
+                <InnerTooltip></InnerTooltip>
+            </Tooltip>
+    }else{
+        return <Tooltip
+        key={pinId+"_tooltip_unforced"}
         direction='top' 
         offset={[0,-40]} 
         opacity={0.9} 
+        permanent={false}
         className={'rounded-lg border-slate-800'}>
             <InnerTooltip></InnerTooltip>
+        </Tooltip>          
+    }      
+    
+}
+
+/**
+ * Creates a popup when AI pins are placed that disappears after a few seconds.
+ * Uses a Tooltip object to create the popup.
+ * @param {*} props
+ * @returns
+ */
+export function AIPopup({timePlaced, message=""}){
+    const [secondsSincePlaced, setSecondsSince] = useState(Math.floor((Date.now() - new Date(timePlaced + "UTC"))/1000));
+    const [opacity, setOpacity] = useState(0.5);
+    const numSecondsToShow = 8;
+    const numSecondsToFade = 3;
+
+    //Update timeSincePlaced if it's been more than a second and less than numSecondsToShow seconds
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            setSecondsSince(Math.floor((Date.now() - new Date(timePlaced + "UTC"))/1000));
+
+            //Fade out if more than numSecondsToShow-numSecondsToFade seconds have passed
+            if(secondsSincePlaced > numSecondsToShow-numSecondsToFade){
+                setOpacity(1.0 - ((secondsSincePlaced - (numSecondsToShow-numSecondsToFade))/numSecondsToFade));
+            }
+        }, 200);
+
+        //Clear interval in numSecondsToShow seconds for performance
+        setTimeout(() => {
+            clearInterval(interval);
+        }, (numSecondsToShow+1)*1000);
+
+        return () => clearInterval(interval);
+    })
+
+    // If more than numSecondsToShow seconds have passed, fade out then don't show/render
+    if(secondsSincePlaced > numSecondsToShow){
+        return <></>
+    }
+    
+    return <Tooltip
+        direction='top'
+        offset={[0,-40]}
+        opacity={opacity}
+        permanent={true}
+        className={'rounded-lg border-slate-800 '}>
+            <div className='p-2 w-fit'>
+                {/* List Message only */}
+                <div className='w-lg whitespace-normal'>
+                    <b>Message: </b>
+                    {`"${message}"`}
+                </div>
+            </div>
         </Tooltip>
     
 }
+                
+
 
 /**
  * Handles the client side logic of adding a new pin to be displayed.
@@ -316,6 +389,7 @@ export function SharedPin({pinId, lat, lon, color, userMoved, userPlaced, aiPlac
                 aiPlaced={aiPlaced} 
                 timePlaced={timePlaced}
                 message={message}/>
+           
         </Marker>
         <Circle
             key={pinId+"_pinCircle"}
