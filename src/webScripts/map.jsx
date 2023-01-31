@@ -216,23 +216,23 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced,
 
     function UserIconPopup ({userId}){
         function IconImg({iconToDisplay}){
-            return <img className="flex-1 w-6 h-6 rounded-full" src={iconToDisplay} />
+            return <img className="w-8 h-8 rounded-full" src={iconToDisplay} />
         }
 
         if(userId.toLowerCase() == "ai"){
-            return <div className='flex flex-row items-center'>
+            return <div className='w-full flex flex-row items-center justify-center'>
                 <IconImg iconToDisplay={aiIcon}/>
                 </div>
         }else if(userId.toLowerCase() == "1"){
-            return <div className='flex flex-row items-center'>
+            return <div className='w-full flex flex-row items-center justify-center'>
                 <IconImg iconToDisplay={userOneIcon}/>
                 </div>
         }else if(userId.toLowerCase() == "2"){
-            return <div className='flex flex-row items-center'>
+            return <div className='w-full flex flex-row items-center justify-center'>
                 <IconImg iconToDisplay={userTwoIcon}/>
                 </div>
         }else{
-            return <div className='flex flex-row items-center'>
+            return <div className='w-full flex flex-row items-center justify-center'>
                 <IconImg iconToDisplay={userIcon}/>
             </div>
         }
