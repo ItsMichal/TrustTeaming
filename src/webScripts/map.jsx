@@ -16,6 +16,10 @@ import redIcon from '../assets/img/red.png';
 import aiGreenIcon from '../assets/img/icons/ai_green.png';
 import aiRedIcon from '../assets/img/icons/ai_red.png';
 import shadow from '../assets/img/shadow.png';
+import aiIcon from "../assets/img/user_icons/ai_icon.png";
+import userOneIcon from "../assets/img/user_icons/user_one.png";
+import userTwoIcon from "../assets/img/user_icons/user_two.png";
+import userIcon from "../assets/img/user_icons/user_icon.png";
 import {offenseToIcon} from './crimes';
 import 'leaflet.markercluster/dist/leaflet.markercluster.js'
 import '../assets/css/marker.css'
@@ -209,6 +213,32 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced,
         return () => clearInterval(interval);
     }, [forcePopup, minutes, seconds, tmzDate])
 
+
+    function UserIconPopup ({userId}){
+        function IconImg({iconToDisplay}){
+            return <img className="flex-1 w-6 h-6 rounded-full" src={iconToDisplay} />
+        }
+
+        if(userId.toLowerCase() == "ai"){
+            return <div className='flex flex-row items-center'>
+                <IconImg iconToDisplay={aiIcon}/>
+                </div>
+        }else if(userId.toLowerCase() == "1"){
+            return <div className='flex flex-row items-center'>
+                <IconImg iconToDisplay={userOneIcon}/>
+                </div>
+        }else if(userId.toLowerCase() == "2"){
+            return <div className='flex flex-row items-center'>
+                <IconImg iconToDisplay={userTwoIcon}/>
+                </div>
+        }else{
+            return <div className='flex flex-row items-center'>
+                <IconImg iconToDisplay={userIcon}/>
+            </div>
+        }
+    }
+                
+
     function InnerTooltip(){
         return <div className='p-2 w-fit'>
             <h3 className='text-center font-bold text-lg'>Pin {pinId}</h3>
@@ -226,13 +256,15 @@ export function SharedPopup({pinId, userMoved, userPlaced, aiPlaced, timePlaced,
                 </>
             }
             <div className='grid grid-cols-2 gap-2 text-center auto-cols-max w-48'>
-                <div className='w-fit'>
+                <div className='w-fit text-center'>
                     <h4 className='font-bold'>Original User</h4>
-                    <p>{userPlaced}</p>
+                    <UserIconPopup userId={userPlaced}/>
+                    {/* <p>{userPlaced}</p> */}
                 </div>
-                <div className='w-fit'>
+                <div className='w-fit text-center'>
                     <h4 className='font-bold'>Last Moved By</h4>
-                    <p>{userMoved == "" ? "Nobody" : userMoved}</p>
+                    {/* <p>{userMoved == "" ? "Nobody" : userMoved}</p> */}
+                    {userMoved != "" ? <UserIconPopup userId={userMoved}/>  : <p>Nobody</p>}
                 </div>
             </div>
             <hr className='m-2'></hr>

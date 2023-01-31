@@ -7,6 +7,12 @@ import { useState } from "react";
 import { ReviewMap, SharedMap, SharedPin } from '../webScripts/map'
 import { DefaultPanel, ReadyPanel } from "./readyUp";
 
+//import user icons
+import aiIcon from "../assets/img/user_icons/ai_icon.png";
+import userOneIcon from "../assets/img/user_icons/user_one.png";
+import userTwoIcon from "../assets/img/user_icons/user_two.png";
+import userIcon from "../assets/img/user_icons/user_icon.png";
+
 //TODO: Refactor out pin logic, maybe sidebar logic too?
 
 //globals
@@ -58,11 +64,44 @@ export function UserPanel({userId, ready, scores}){
         return sum + cur;
     }, 0);
 
+    
+    function UserIcon(){
+        //if ai, use ai Icon, and center within div
+        if(userId.toLowerCase() == "ai"){
+            //return ai icon
+            
+            return <div className="flex justify-center items-center">
+
+                <img className="w-16 h-16 rounded-full" src={aiIcon} />
+            </div>
+                
+            
+        }else if(userId.toLowerCase() == "1"){
+            //if user, use user icon
+            return <div className="flex justify-center items-center">
+                <img className="w-16 h-16 rounded-full" src={userOneIcon} />
+            </div>
+        }else if(userId.toLowerCase() == "2"){
+            //if user, use user icon
+            return <div className="flex justify-center items-center">
+                <img className="w-16 h-16 rounded-full" src={userTwoIcon} />
+            </div>
+        }else{
+            //if user, use user icon
+            return <div className="flex justify-center items-center">
+                <img className="w-16 h-16 rounded-full" src={userIcon} />
+            </div>
+        }
+    }
+
 
     return <div className="mx-5 m-2 border bg-slate-900 font-bold rounded-xl border-slate-900">
         <h2 className="text-stone-100 text-center uppercase">User {userId}</h2>
         <div className="bg-stone-200 p-2 rounded-bl-xl rounded-br-xl">
-            <div className="columns-3 gap-2 w-full">
+            <div className="grid grid-cols-4 gap-2 w-full">
+                <div className="overflow-clip ">
+                    <UserIcon />
+                </div>
                 <div className="overflow-clip">
                     <div className="uppercase text-sm text-slate-600/80">Status</div>
                     <h3>{ready ? "Ready" : "Not Ready"}</h3>
