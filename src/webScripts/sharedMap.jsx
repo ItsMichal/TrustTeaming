@@ -303,6 +303,7 @@ function updateView(){
             );
             userPanelRoot.render(
                 <ReadyPanel
+                    survey={latestLiveData.curRoundCfg.surveyLink}
                     users={latestLiveData.users}
                     readyHook={readyReview}>
                 </ReadyPanel>
