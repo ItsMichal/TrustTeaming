@@ -219,8 +219,12 @@ function renderCrimeView(){
         });
 
         liveSocket.on('liveCfg', (data) => {
-            console.log("WOW GOT A RESPONSE");
-            console.log(data);
+            //Check if data pertains to us
+            if(data.userId != response.userId){
+                return;
+            }
+
+            //Update the date picker
             blockedDate = data.curDate;
             datePickerRenderer.render(
                 <DatePicker
@@ -231,6 +235,8 @@ function renderCrimeView(){
                     changeCallback={rerenderMapView}
                 ></DatePicker>
             );
+
+            //Update the crime type picker
             filterRenderer.render(
                 <CrimeTypePicker
                     crimeList={data.categories}
