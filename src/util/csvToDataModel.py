@@ -22,7 +22,7 @@ def csvToDataModel(file : FileStorage, code : str, force : bool = False):
 
     for row in csvConfigReader:
         #Check validity
-        if len(row) != 9:
+        if len(row) != 8:
             raise(BaseException("Wrong CSV format!"))
 
 
@@ -56,15 +56,12 @@ def csvToDataModel(file : FileStorage, code : str, force : bool = False):
             max_red_for_rid = int(row[7])
         
 
-        # Get the survey link
-        survey_link = row[8]
-
 
         #Create obj for Round
         DataManager().createRoundConfig(code= code, user_id=user_id,
                                     round_id=round_num, layers=layers, question=question,
                                     time=time, target_date=date, max_red=max_red_for_rid,
-                                    max_green=max_grn_for_rid, force=force, survey_link=survey_link)
+                                    max_green=max_grn_for_rid, force=force)
 
     # end of for loop
 

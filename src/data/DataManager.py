@@ -46,7 +46,7 @@ class DataManager(object):
     #     exp.liveExperiment.actor_instructions = instructions
     #     exp.liveExperiment.save()
 
-    def createRoundConfig(self, user_id, code, round_id, layers, question, time, target_date, max_red, max_green, survey_link, force=False):
+    def createRoundConfig(self, user_id, code, round_id, layers, question, time, target_date, max_red, max_green, force=False):
         try:
             experiment_config = self.getExperimentByCode(code)
 
@@ -58,7 +58,7 @@ class DataManager(object):
             newRoundConfig = RoundConfig(user_id=user_id, code=code, 
                                         round_id=round_id, layers=layers, question=question, 
                                         time=time, target_date=target_date, max_red=max_red,
-                                        max_green=max_green, survey_link=survey_link, experiment_config=experiment_config)
+                                        max_green=max_green, experiment_config=experiment_config)
 
             newRoundConfig.save()
         except AttributeError as attr:

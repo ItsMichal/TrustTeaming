@@ -18,7 +18,7 @@ Django==4.0
 entrypoints==0.4
 executing==0.8.2
 Flask==2.0.2
-Flask-Classful==0.15.0b1
+Flask-Classful==0.15.0.dev0
 Flask-JWT-Extended==4.3.1
 Flask-Login==0.5.0
 Flask-SocketIO==5.1.1
