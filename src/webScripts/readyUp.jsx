@@ -8,19 +8,43 @@ import { UserPanel } from "./sharedMap";
 //TODO: Make it so that Ready button disappears
 //TODO: Add survey functionality between rounds
 export function ReadyPanel({users, readyHook, survey, surveyHook}){
+    //If survey is length 0, then set to false
+    if(!survey || survey.length == 0){
+        survey = false;
+    }
+
+    const [surveyClicked, setSurveyClicked] = React.useState(false);
+
+    function onSurveyClick(){
+        if(surveyHook){
+            surveyHook();
+        }
+
+        setSurveyClicked(true);
+    }
+
     return <>
             <h2 className="pl-5 text-xl font-bold animate-pulse">Ready Up!</h2>
             {Object.values(users).map((user) => {
                 return <UserPanel key={user.userId} {...user} />
             })}
             <div className="flex flex-row gap-2">
-                <div onClick={readyHook} 
-                    className="flex-1 bg-blue-400 mx-5 mt-5 rounded-lg p-2 hover:bg-blue-600 active:bg-blue-800 text-white font-bold">
-                    Ready!
-                </div>
-                {survey 
+                {(!survey || surveyClicked) && 
+                    <div onClick={readyHook} 
+                        className="flex-1 bg-blue-400 mx-5 mt-5 rounded-lg p-2 hover:bg-blue-600 active:bg-blue-800 text-white font-bold">
+                        Ready!
+                    </div>
+                }
+                {survey && !surveyClicked 
                     && 
-                    <div onClick={surveyHook}>Survey</div>
+                    <a 
+                        href={survey}
+                        target="_blank"
+                        rel = "noreferrer"
+                        className="flex-1 bg-purple-600 mx-5 mt-5 rounded-lg p-2 hover:bg-purple-700 active:bg-purple-900 text-white font-bold"
+                        onClick={onSurveyClick}>
+                            Take Survey
+                    </a>
                 }
             </div>
         </>
