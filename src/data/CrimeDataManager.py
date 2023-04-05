@@ -78,6 +78,12 @@ class CrimeDataManager(object):
     def filterDfByDateRange(self, df : pd.DataFrame, start : str, end : str, categories : list[str]):
         print("HERO-", start, end, categories)
 
+        #if start and end dates contain time, strip the time and only keep date
+        if len(start) > 10:
+            start = start[:10]
+        if len(end) > 10:
+            end = end[:10]
+
         startDateProto = strptime(start, '%Y-%m-%d')
         endDateProto = strptime(end, '%Y-%m-%d')
        

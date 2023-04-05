@@ -343,6 +343,7 @@ class LiveCore(Namespace):
     def on_crimeLiveConfig(self, req={}):
         if 'userId' in req:
             emit('liveCfg', {
+                'userId': req['userId'],
                 'curDate': self.getCurrentDate(req['userId']).__str__(),
                 'categories': self.getAllowedCategories(req['userId'])
             }, broadcast=True)
