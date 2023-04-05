@@ -220,6 +220,7 @@ function renderCrimeView(){
 
         liveSocket.on('liveCfg', (data) => {
             //Check if data pertains to us
+            //TODO: Should be done on server for proper "security"
             if(data.userId != response.userId){
                 return;
             }
