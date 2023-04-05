@@ -10,6 +10,7 @@ class RoundConfig(rom.Model):
     target_date = rom.Date(required=True)
     max_red = rom.Integer(required=True)
     max_green = rom.Integer(required=True)
+    survey_link = rom.String(required=True)
     experiment_config = rom.ManyToOne('ExperimentConfig', on_delete="cascade", required=True)
 
     unique_together = [
@@ -26,7 +27,8 @@ class RoundConfig(rom.Model):
             "time": self.time,
             "targetDate": str(self.target_date),
             "maxRed": self.max_red,
-            "maxGreen": self.max_green
+            "maxGreen": self.max_green,
+            "surveyLink": self.survey_link.decode()
         }
 
     def __str__(self):

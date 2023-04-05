@@ -142,7 +142,7 @@ function DataPanel({config, userId}){
     React.useEffect(() => {
         function updateTime(){
             if(config.timeRoundStarted != null && config.state == "running"){
-                let diff = ((new Date().getTime()) - (new Date(config.timeRoundStarted + " UTC").getTime())) / 1000;
+                let diff = ( (new Date(config.timeRoundStarted + " UTC").getTime() + config.curRoundCfg.time *1000) - (new Date().getTime()) ) / 1000;
                 settimeRoundStarted(Math.round(diff) + "s");
             }else{
                 settimeRoundStarted("N/A");
@@ -187,7 +187,7 @@ function DataPanel({config, userId}){
                     <h3>{curRoundCfg.roundId}</h3>
                 </div>
                 <div className="w-full">
-                    <div className="uppercase text-sm text-slate-600/80">Time</div>
+                    <div className="uppercase text-sm text-slate-600/80">Time Rem.</div>
                     <h3>{timeRoundStarted}</h3>
                 </div>
                 <div className="w-full">
@@ -303,6 +303,7 @@ function updateView(){
             );
             userPanelRoot.render(
                 <ReadyPanel
+                    survey={latestLiveData.curRoundCfg.surveyLink}
                     users={latestLiveData.users}
                     readyHook={readyReview}>
                 </ReadyPanel>
