@@ -4,7 +4,7 @@
   "description": "Trust teaming testbed for SHINE Lab experiment",
   "main": "src/app.py",
   "scripts": {
-    "start": "cd src && python3 app.py",
+    "start": "cd src && python3.10 app.py",
     "build": "webpack --progress --config webpack.config.js",
     "pip": "pip3 install -r requirements.txt",
     "venv": "source ~/.virtualenvs/trust/bin/activate",
