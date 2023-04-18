@@ -20,7 +20,7 @@ import aiIcon from "../assets/img/user_icons/ai_icon.png";
 import userOneIcon from "../assets/img/user_icons/user_one.png";
 import userTwoIcon from "../assets/img/user_icons/user_two.png";
 import userIcon from "../assets/img/user_icons/user_icon.png";
-import {offenseToIcon} from './crimes';
+import {offenseToIcon, offensesToReadable} from './crimes';
 import 'leaflet.markercluster/dist/leaflet.markercluster.js'
 import '../assets/css/marker.css'
 // import 'leaflet.markercluster/dist/MarkerCluster.css'
@@ -76,7 +76,7 @@ export function CrimePin({lat, lon, green, offense, date, address}){
             })
     }).bindPopup(
         `<div>
-        <h1 className="font-bold text-lg">${offense}</h1>
+        <h1 className="font-bold text-lg">${offensesToReadable[offense]}</h1>
         <h2 className="font-semibold">${address}</h2>
         ${date}
         </div>`
