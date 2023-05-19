@@ -1,11 +1,15 @@
 # Trust Teaming (WIP)
 
+---
+
 ## About
 
 This webapp is the newly improved testbed for the Trust Teaming experiment
 conducted at the [SHINE Lab](https://shinelaboratory.com).
 
-## Local Installation
+---
+
+## Installation for Usage
 
 ### Prerequisites
 
@@ -42,19 +46,34 @@ is out of scope for this testbed's responsibilities.
 
 **Note**- Sample config CSVs available under `/samples`
 
-## Libraries used
+---
+
+## Developer Notes
+
+-   Please maintain styling using Prettier
+-   Currently no CI/CD setup, but coming soon?
+-   Also needs Dockerization
+-   Otherwise, modular setup, and adding new features appreciated
+
+### Libraries used
 
 -   See `requirements.txt` and `package.json`
 
-## Note about `crime.csv`
+### Note about `crime.csv`
 
-Please download this seperately, and put under `data/`.
+Initial versions of this projects relied on a large database of Denver crime
+data in a `crime.csv` file. This is available upon request, but we now use
+`src/data/updatedcrimedata`, a compressed and Pandas optimized version of the
+data. See `src/data/datagenerator.ipynb` for details.
 
-## License and Usage
+### License and Usage
 
 Please contact Dr. Leanne Hirshfield at the SHINE Laboratory
-(shine.lab@colorado.edu) for access and usage within your lab. A proper
-licensing system is in the works.
+([shine.lab@colorado.edu](mailto:shine.lab@colorado.edu)) for access and usage
+within your lab. A proper licensing system is in the works, for now all rights
+reserved SHINE Laboratory.
+
+---
 
 ## CSCI5448 - Object Oriented Analysis and Design
 
