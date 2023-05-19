@@ -3,38 +3,65 @@
         <title>Trust Teaming</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/styles.css"/>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin="" />
-        <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
-        <script src="https://cdn.socket.io/4.4.0/socket.io.min.js" integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="/styles.css" />
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+            integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+            crossorigin=""
+        />
+        <script
+            src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+            integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+            crossorigin=""
+        ></script>
+        <script
+            src="https://cdn.socket.io/4.4.0/socket.io.min.js"
+            integrity="sha384-1fOn6VtTq3PWwfsOrk45LnYcGosJwzMHv+Xh/Jx5303FVOXzEnw0EpLv30mtjmlj"
+            crossorigin="anonymous"
+        ></script>
         <script src="leaflet-partition.min.js"></script>
         <script src="https://d3js.org/d3-voronoi.v1.min.js"></script>
         <script src="/static/dist/global.css"></script>
     </head>
-    <body class="bg-gray-300 grid grid-cols-12 content-center items-center" >
-       {# Sidebar #}
-       <div class="col-span-3 max-h-screen h-screen bg-gray-300 w-100 border-r border-black flex flex-1 flex-col">
+    <body class="bg-gray-300 grid grid-cols-12 content-center items-center">
+        {# Sidebar #}
+        <div
+            class="col-span-3 max-h-screen h-screen bg-gray-300 w-100 border-r border-black flex flex-1 flex-col"
+        >
             {# Switcher Bar at Top #}
             <div class="w-100 flex flex-row">
-                <button class="flex-grow bg-stone-200 py-3 border border-black border-b-0 rounded-tr-lg">Crime</button>
-                <button class="bg-stone-300 text-stone-500 flex-grow py-3 rounded-tl-lg border-b border-black">Shared</button>
+                <button
+                    class="flex-grow bg-stone-200 py-3 border border-black border-b-0 rounded-tr-lg"
+                >
+                    Crime
+                </button>
+                <button
+                    class="bg-stone-300 text-stone-500 flex-grow py-3 rounded-tl-lg border-b border-black"
+                >
+                    Shared
+                </button>
             </div>
             {# Main Sidebar Content #}
-            <div class="bg-stone-200 overflow-scroll flex-grow border-l border-b border-black">
-                <hr class="mx-10 mt-5 border-black">
-                <h2 class="text-2xl font-bold text-stone-800 text-center pt-3 pb-3 uppercase">You are user {{user_id}}</h2>
-                <hr class="mx-10 border-black">
+            <div
+                class="bg-stone-200 overflow-scroll flex-grow border-l border-b border-black"
+            >
+                <hr class="mx-10 mt-5 border-black" />
+                <h2
+                    class="text-2xl font-bold text-stone-800 text-center pt-3 pb-3 uppercase"
+                >
+                    You are user {{user_id}}
+                </h2>
+                <hr class="mx-10 border-black" />
                 <h3 class="text-2xl font-bold my-2 pl-5" id="stat"></h3>
                 <h3 class="text-xl font-bold my-2 pl-5">Date Range Picker</h3>
                 <div id="datepicker" class="rounded-xl"></div>
                 <h3 class="text-xl font-bold mt-5 pl-5">Crime Types</h3>
                 <div id="filter"></div>
             </div>
-       </div>
-       {# Right Side #}
-       <div class="col-span-9 h-screen w-full h-full" id="map">
-            Map
-       </div>
+        </div>
+        {# Right Side #}
+        <div class="col-span-9 h-screen w-full h-full" id="map">Map</div>
 
         <script src="/static/dist/crimeMapListing.js"></script>
     </body>

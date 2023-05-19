@@ -21,7 +21,7 @@ def csvToActorInstructions(file : FileStorage, code : str):
         for instruction in config.actorInstructions:
             instruction.delete()
 
-    for row in csvConfigReader:
+    for row in csvConfigReader: 
         #Check validity
         if len(row) != 6:
             raise(BaseException("Wrong CSV format!"))

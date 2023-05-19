@@ -261,8 +261,6 @@ class LiveCore(Namespace):
 
         self.logger.logEvent("roundStarted", "system")
     
-
-
     def endRound(self):
         #TODO score calculation
         print("ENDING ROUND")

@@ -81,6 +81,15 @@ class DataManager(object):
             print(err)
             raise err
     
+
+    def addRoundsToExperimentConfig(self, code, rounds):
+        try:
+            experiment_config = self.getExperimentByCode(code)
+            experiment_config.roundConfigs = rounds
+            experiment_config.save()
+        except AttributeError as attr:
+            print("Could not add rounds to experiment config - AttrError", attr)
+
     def deleteExperimentConfig(self, code):
         try:
             oldExperiment = self.getExperimentByCode(code)

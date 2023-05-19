@@ -8,6 +8,7 @@ from flask import request
 from werkzeug.utils import redirect
 from data import DataManager
 from util.csvToActorInstructions import csvToActorInstructions
+from util.jsonToConfig import jsonToConfig
 
 sys.path.append("..") #python bs
 from views import AdminView
@@ -63,6 +64,20 @@ class AdminCore(object):
             return Response({"success":"Deleted experiment"}, status=200)
         else:
             return Response({"error":"No code provided"}, status=400)
+
+    @admin_bp.route('/configJson', methods=['POST'], endpoint='configUpdate')
+    @AuthCore.require_admin
+    def configJson():
+        # if json attached to request contains a code, update the experiment config
+        if("code" in request.get_json()):
+            try:
+                jsonToConfig(request.get_json())
+                return Response({"success":"Updated experiment config"}, status=200)
+            except BaseException as err:
+                return Response({"error":err.__str__()}, status=400)
+        else:
+            return Response({"error":"No code provided"}, status=400)
+
 
     @admin_bp.route('/configUpload', methods=['POST'], endpoint='configUpload')
     @AuthCore.require_admin
@@ -139,6 +154,7 @@ class AdminCore(object):
     @admin_bp.route('/getConfig', methods=['GET', 'POST'])
     def getConfig():
         return DataManager().getExperimentsJSON()
+
 
     @socketio.on('sendLive', namespace=route_base)
     def liveRequest(req={}):
