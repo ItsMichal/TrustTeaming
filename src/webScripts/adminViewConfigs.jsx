@@ -37,46 +37,60 @@ function stopExperiment(code) {
     document.getElementById('statusHead_' + code).innerHTML = 'Stopping...'
 }
 
-function UserTable({ users }) {
-    return (
-        <>
-            {' '}
-            <br></br>
-            <br></br>
-            {Object.keys(users).map((user, index) => {
-                return (
-                    <>
-                        <tr
-                            key={index}
-                            className='w-100 text-center border-gray border-b'
-                        >
-                            <td className='py-2 font-bold row-span-2'>
-                                User {users[user].userId}
-                            </td>
-                        </tr>
-                        <tr
-                            key={index}
-                            className='w-100 text-center border-gray border-b'
-                        >
-                            <td className='py-2 font-normal'>Scores</td>
-                            <td className='py-2'>
-                                {Object.keys(users[user].scores).map(
-                                    (score, index) => {
-                                        return (
-                                            <div key={index}>
-                                                Round {score}:{' '}
-                                                {users[user].scores[score]}
-                                            </div>
-                                        )
-                                    },
-                                )}
-                            </td>
-                        </tr>
-                    </>
-                )
-            })}
-        </>
-    )
+function UserTable({ users, code }) {
+    return Object.keys(users).map((user, index) => {
+        let key = users[user].userId + '_' + index + '_' + code
+        return (
+            <tr key={key} className='w-100'>
+                <td colSpan={2}>
+                    <div
+                        key={key + '_1'}
+                        className='w-100 text-center border-gray border-b'
+                    >
+                        <div className='py-2 font-bold row-span-2'>
+                            User {users[user].userId}
+                        </div>
+                    </div>
+                    <div
+                        key={key + '_2'}
+                        className='flex flex-row  w-100 text-center border-gray border-b'
+                    >
+                        <div className='font-bold mr-5 py-2 w-min '>
+                            {Object.keys(users[user].scores).map(
+                                (score, index2) => {
+                                    return (
+                                        <div
+                                            key={
+                                                'scorename_' +
+                                                key +
+                                                '_' +
+                                                index2
+                                            }
+                                        >
+                                            Round {score}
+                                        </div>
+                                    )
+                                },
+                            )}
+                        </div>
+                        <div className='py-2'>
+                            {Object.keys(users[user].scores).map(
+                                (score, index2) => {
+                                    return (
+                                        <div
+                                            key={'score_' + key + '_' + index2}
+                                        >
+                                            {users[user].scores[score]}
+                                        </div>
+                                    )
+                                },
+                            )}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        )
+    })
 }
 
 function ConfigLive(props) {
@@ -164,6 +178,7 @@ function ConfigLive(props) {
                         </tr>
                         <UserTable
                             users={props.liveExperiment.liveCore.users}
+                            code={props.code}
                         />
                         <tr className='w-100 text-center border-gray border-b'>
                             <td className='py-2 font-bold'>
@@ -392,7 +407,7 @@ class ConfigView extends React.Component {
         socket.emit('sendLive')
     }
     updateState = liveExperiments => {
-        console.log('UPDATING')
+        console.log('UPDATING', liveExperiments.liveExperiments)
         this.setState({
             liveExperiment: liveExperiments.liveExperiments,
         })
