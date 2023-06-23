@@ -21,6 +21,7 @@ def jsonToRounds(experiment_config, rounds : list):
                 max_red=round['maxRed'],
                 max_green=round['maxGreen'],
                 survey_link=round['surveyLink'],
+                show_review=round['showReview'],
                 force=True
             )
 

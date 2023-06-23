@@ -6,6 +6,7 @@ import { DateTime } from 'luxon'
 import { ConfigAccordion } from './accordion'
 import { offenseToIcon } from './crimes'
 import '../assets/css/global.css'
+import { ConfigPanel } from './configPanel'
 
 function ConfigRow(props) {
     console.log('NOOOO')
@@ -234,11 +235,15 @@ function ConfigTable(props) {
 
     return (
         <div className='bg-white shadow rounded-lg p-5 my-5'>
+            <ConfigPanel
+                key={props.config.code}
+                config={props.config}
+            ></ConfigPanel>
             <div className='flex flex-row border-b-2 pb-3'>
-                <h2 className='font-bold text-xl'>
+                {/* <h2 className='font-bold text-xl'>
                     <small className='text-gray-500'>CODE: </small>
                     {props.code}
-                </h2>
+                </h2> */}
                 <div className='flex-grow'></div>
                 <div
                     className='bg-red-500 p-2 
@@ -253,12 +258,15 @@ function ConfigTable(props) {
                 >
                     Delete Experiment!
                 </div>
+                <div className='flex-grow'></div>
             </div>
+
             <ConfigLive
                 liveExperiment={props.liveExperiment}
                 code={props.code}
             ></ConfigLive>
-            <div className='bg-gray-100 shadow rounded-lg p-5 my-5'>
+
+            {/* <div className='bg-gray-100 shadow rounded-lg p-5 my-5'>
                 <ConfigAccordion
                     topElement={
                         <h3 className='border-b-2 py-1 text-center text-xl font-bold'>
@@ -336,7 +344,7 @@ function ConfigTable(props) {
                         ></ActorInstructionUpload>
                     }
                 ></ConfigAccordion>
-            </div>
+            </div> */}
         </div>
     )
 }
@@ -428,15 +436,18 @@ class ConfigView extends React.Component {
                 {this.props != undefined &&
                     this.props.configs.map(config => {
                         return (
-                            <ConfigTable
-                                key={config.code}
-                                liveExperiment={
-                                    this.state.liveExperiment[config.code]
-                                }
-                                valid_uids={config.valid_uids}
-                                code={config.code}
-                                rounds={config.rounds}
-                            ></ConfigTable>
+                            <>
+                                <ConfigTable
+                                    key={config.code}
+                                    liveExperiment={
+                                        this.state.liveExperiment[config.code]
+                                    }
+                                    valid_uids={config.valid_uids}
+                                    code={config.code}
+                                    rounds={config.rounds}
+                                    config={config}
+                                ></ConfigTable>
+                            </>
                         )
                     })}
             </>

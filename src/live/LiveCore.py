@@ -56,9 +56,7 @@ class LiveCore(Namespace):
         self.initLiveUsers()
         print("Live core initialized", self.route_base+self.code)
 
-    # def __del__(self):
-    #     print("Deleting live core")
-    #     super().__del__()
+   
 
     def checkForActor(self):
         actors = ActorInstruction.query.filter(code=self.code).all()

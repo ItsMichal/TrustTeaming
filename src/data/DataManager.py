@@ -46,7 +46,7 @@ class DataManager(object):
     #     exp.liveExperiment.actor_instructions = instructions
     #     exp.liveExperiment.save()
 
-    def createRoundConfig(self, user_id, code, round_id, layers, question, time, target_date, max_red, max_green, survey_link, force=False):
+    def createRoundConfig(self, user_id, code, round_id, layers, question, time, target_date, max_red, max_green, survey_link, show_review, force=False):
         try:
             experiment_config = self.getExperimentByCode(code)
 
@@ -58,7 +58,8 @@ class DataManager(object):
             newRoundConfig = RoundConfig(user_id=user_id, code=code, 
                                         round_id=round_id, layers=layers, question=question, 
                                         time=time, target_date=target_date, max_red=max_red,
-                                        max_green=max_green, survey_link=survey_link, experiment_config=experiment_config)
+                                        max_green=max_green, survey_link=survey_link,
+                                        show_review=show_review, experiment_config=experiment_config)
 
             newRoundConfig.save()
         except AttributeError as attr:
@@ -148,10 +149,9 @@ class DataManager(object):
         returnJson = {"configs":[]}
 
         for exp in all_exps:
-            code = exp.code.decode()
-            valid_uids = exp.valid_uids
-            
-            returnJson["configs"].append({"code":code, "valid_uids":valid_uids, "rounds":[rnd.toJSON() for rnd in exp.roundConfigs]})
+            returnJson["configs"].append(
+                exp.toJSON()
+            )
 
         return returnJson
 

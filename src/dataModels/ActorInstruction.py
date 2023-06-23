@@ -14,7 +14,7 @@ class ActorInstruction(rom.Model):
     def toJSON(self):
         return {
             "code": self.code.decode(),
-            "roundId": self.round_id,
+            "roundId": self.roundId,
             "time": self.time,
             "color": self.color.decode(),
             "lat": self.lat,
