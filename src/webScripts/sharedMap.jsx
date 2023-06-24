@@ -438,6 +438,17 @@ function updateView() {
                     readyHook={readyReview}
                 ></ReadyPanel>,
             )
+        } else if (latestLiveData.state == 'survey') {
+            sharedMapRoot.render(
+                <div className='bg-white w-fit p-5 h-fit rounded-lg m-auto'>
+                    <ReadyPanel
+                        survey={latestLiveData.curRoundCfg.surveyLink}
+                        users={latestLiveData.users}
+                        readyHook={readyReview}
+                        title={'Survey Time!'}
+                    ></ReadyPanel>
+                </div>,
+            )
         } else {
             sharedMapRoot.render(
                 <DefaultPanel

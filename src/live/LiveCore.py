@@ -263,7 +263,12 @@ class LiveCore(Namespace):
         #TODO score calculation
         print("ENDING ROUND")
 
-        self.data.state = b'review'
+        # check if config calls for review
+        if(self.getCurRoundCfg().show_review):
+            self.data.state = b'review'
+        else:
+            self.data.state= b'survey'
+
         self.data.save()
         self.logger.logEvent("roundEnded", "system")
 

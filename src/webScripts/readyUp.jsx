@@ -5,7 +5,7 @@ import { UserPanel } from './sharedMap'
 //TODO: Make it so you can unready
 //TODO: Make it so that Ready button disappears
 //TODO: Add survey functionality between rounds
-export function ReadyPanel({ users, readyHook, survey, surveyHook }) {
+export function ReadyPanel({ users, readyHook, survey, surveyHook, title }) {
     //If survey is length 0, then set to false
     if (!survey || survey.length == 0) {
         survey = false
@@ -23,7 +23,9 @@ export function ReadyPanel({ users, readyHook, survey, surveyHook }) {
 
     return (
         <>
-            <h2 className='pl-5 text-xl font-bold animate-pulse'>Ready Up!</h2>
+            <h2 className='pl-5 text-xl font-bold animate-pulse'>
+                {title ? title : 'Ready Up!'}
+            </h2>
             {Object.values(users).map(user => {
                 return <UserPanel key={user.userId} {...user} />
             })}
