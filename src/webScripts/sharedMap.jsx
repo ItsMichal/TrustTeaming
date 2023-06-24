@@ -258,6 +258,7 @@ function DataPanel({ config, userId }) {
     if (curRoundCfg == undefined) {
         return <>ERROR: No matching config found!</>
     }
+    console.log(config)
 
     return (
         <div className='mx-5 m-2 border bg-slate-900 font-bold rounded-xl border-slate-900'>
@@ -294,7 +295,18 @@ function DataPanel({ config, userId }) {
                         <div className='uppercase text-sm text-slate-600/80'>
                             Earned
                         </div>
-                        <h3>${config.users[userId].score}</h3>
+                        {/* sum scores */}
+                        <h3>
+                            $
+                            {Object.keys(config.users[userId].scores).reduce(
+                                (acc, cur) => {
+                                    return (
+                                        acc + config.users[userId].scores[cur]
+                                    )
+                                },
+                                0,
+                            )}
+                        </h3>
                     </div>
                 </div>
             </div>
