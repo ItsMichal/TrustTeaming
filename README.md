@@ -1,4 +1,4 @@
-# Trust Teaming <small><small>| Beta <small><small>v2023.05</small></small></small></small>
+# Trust Teaming <small><small>| Beta <small><small>v2023.06</small></small></small></small>
 
 ---
 
