@@ -95,6 +95,11 @@ class LiveCore(Namespace):
     def getRoundCfg(self, roundId, userId=None) -> RoundConfig:
         if(userId is None):
             userId = self.data.users[0].userId.decode()
+        
+        # check for numeric since anything else
+        # is AI at this point
+        if(not userId.isdigit()):
+            return None
             
         for cfg in self.data.config.roundConfigs:
             if cfg.user_id == int(userId) and cfg.round_id == roundId:
@@ -312,6 +317,7 @@ class LiveCore(Namespace):
         if(self.getRoundCfg(self.data.curRoundNum+1) is not None):
             self.data.curRoundNum += 1
             self.data.state = b'idle'
+            self.sendCrimeMapUpdate()
         else:
             print("ENDING EXPERIMENT!")
             self.endExperiment()
@@ -338,6 +344,19 @@ class LiveCore(Namespace):
             print("STALED", userQuery[0].toJSON())
 
 
+    # TODO: Change this stupid crime map live data format to be consistent with
+    # the previous format. Or just consolidate them into one "live" update for 
+    # both maps.
+    def sendCrimeMapUpdate(self):
+        # for each user
+        for user in self.data.users:
+            if(not user.isActor): #we don't need to update the Actors
+                socketio.emit('liveCfg', {
+                    'userId': user.userId.decode(),
+                    'curDate': self.getCurrentDate(user.userId.decode()).__str__(),
+                    'categories': self.getAllowedCategories(user.userId.decode())
+                }, broadcast=True, namespace=self.route_base+self.code)
+
     # Client-side Live
     # CLIENT SIDE FUNCTIONS/SOCKETIO HERE
 
@@ -347,7 +366,7 @@ class LiveCore(Namespace):
                 'userId': req['userId'],
                 'curDate': self.getCurrentDate(req['userId']).__str__(),
                 'categories': self.getAllowedCategories(req['userId'])
-            }, broadcast=True)
+            }, broadcast=True, namespace=self.route_base+self.code)
 
     def on_requestLiveData(self, req={}):
         self.emitCurLiveData()

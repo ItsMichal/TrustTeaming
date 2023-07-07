@@ -160,8 +160,6 @@ class DataManager(object):
 
         if live_exp is None:
             return None
-        
-        print("HEEEERE")
 
         returnJson = {"timeStarted": live_exp.timeStarted.isoformat(timespec='milliseconds') if live_exp.timeStarted is not None else "", 
                         "code": live_exp.config.code.decode(), 
