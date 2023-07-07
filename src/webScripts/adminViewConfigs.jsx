@@ -4,34 +4,34 @@ import { io } from 'socket.io-client'
 import { DateTime } from 'luxon'
 // import { motion } from "framer-motion"
 import { ConfigAccordion } from './accordion'
-import { offenseToIcon } from './crimes'
+// import { offenseToIcon } from './crimes'
 import '../assets/css/global.css'
 import { ConfigPanel } from './configPanel'
 
-function ConfigRow(props) {
-    console.log('NOOOO')
-    console.log(props)
-    return (
-        <tr className='w-100 text-center border-gray border-b'>
-            <td className='py-2'>{props.round_id}</td>
-            <td className='py-2'>{props.user_id}</td>
-            <td className='py-2'>{props.question}</td>
-            <td className='py-2'>
-                <div className='flex flex-row place-content-center'>
-                    {props.layers.map((layer, index) => {
-                        return (
-                            <img
-                                key={'img_' + index}
-                                className='h-12 flex-shrink'
-                                src={offenseToIcon[layer]}
-                            ></img>
-                        )
-                    })}
-                </div>
-            </td>
-        </tr>
-    )
-}
+// function ConfigRow(props) {
+//     console.log('NOOOO')
+//     console.log(props)
+//     return (
+//         <tr className='w-100 text-center border-gray border-b'>
+//             <td className='py-2'>{props.round_id}</td>
+//             <td className='py-2'>{props.user_id}</td>
+//             <td className='py-2'>{props.question}</td>
+//             <td className='py-2'>
+//                 <div className='flex flex-row place-content-center'>
+//                     {props.layers.map((layer, index) => {
+//                         return (
+//                             <img
+//                                 key={'img_' + index}
+//                                 className='h-12 flex-shrink'
+//                                 src={offenseToIcon[layer]}
+//                             ></img>
+//                         )
+//                     })}
+//                 </div>
+//             </td>
+//         </tr>
+//     )
+// }
 
 function stopExperiment(code) {
     socket.emit('stopExperiment', { code: code })
@@ -330,7 +330,7 @@ function ConfigTable(props) {
                         </div>
                     }
                 ></ConfigAccordion>
-            </div>
+            </div> */}
             <div className='bg-gray-100 shadow rounded-lg p-5 my-5'>
                 <ConfigAccordion
                     topElement={
@@ -344,7 +344,7 @@ function ConfigTable(props) {
                         ></ActorInstructionUpload>
                     }
                 ></ConfigAccordion>
-            </div> */}
+            </div>
         </div>
     )
 }
