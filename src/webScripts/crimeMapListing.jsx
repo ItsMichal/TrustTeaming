@@ -161,6 +161,7 @@ function rerenderMapView(start, end, categories) {
 }
 
 function DatePicker({ min, max, startEnd, blockedDate, changeCallback }) {
+    console.log(blockedDate)
     const [state, setState] = useState([
         {
             startDate: min,
@@ -193,9 +194,12 @@ function DatePicker({ min, max, startEnd, blockedDate, changeCallback }) {
                 ></DateRange>
                 <div className='flex-grow'></div>
             </div>
-            <div className='w-full text-center'>
-                <b>Warning:</b> {blockedDate.toDateString()} is now disabled.
-            </div>
+            {blockedDate && (
+                <div className='w-full text-center'>
+                    <b>Warning:</b> {blockedDate.toDateString()} is now
+                    disabled.
+                </div>
+            )}
         </>
     )
 }
@@ -253,12 +257,13 @@ function renderCrimeView() {
             }
 
             //Update the date picker
+            //TODO: Standardize time so the append for local tmz isnt necessary
             blockedDate = data.curDate
             datePickerRenderer.render(
                 <DatePicker
                     min={new Date(response.startDate)}
                     max={new Date(response.endDate)}
-                    blockedDate={new Date(blockedDate)}
+                    blockedDate={new Date(blockedDate + 'T00:00:00')}
                     startEnd={startPlusOne}
                     changeCallback={rerenderMapView}
                 ></DatePicker>,
