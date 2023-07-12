@@ -47,7 +47,6 @@ let mapHandlers = {
 // }
 
 export function UserPanel({ userId, ready, scores }) {
-    console.log(scores)
     let prevScore = 0
 
     //Get prev score
@@ -119,13 +118,15 @@ export function UserPanel({ userId, ready, scores }) {
                         <div className='uppercase text-sm text-slate-600/80'>
                             Prev. Score
                         </div>
-                        <h3>{prevScore == 0 ? '$0' : `$${prevScore}`}</h3>
+                        <h3>
+                            {prevScore == 0 ? '$0' : `$${prevScore.toFixed(2)}`}
+                        </h3>
                     </div>
                     <div className='overflow-clip'>
                         <div className='uppercase text-sm text-slate-600/80'>
                             Tot. Score
                         </div>
-                        <h3>{`$${totalScore}`}</h3>
+                        <h3>{`$${totalScore.toFixed(2)}`}</h3>
                     </div>
                 </div>
             </div>
@@ -263,7 +264,7 @@ function DataPanel({ config, userId }) {
     return (
         <div className='mx-5 m-2 border bg-slate-900 font-bold rounded-xl border-slate-900'>
             <h2 className='text-stone-100 text-center uppercase animate-pulse'>
-                Live Infobox
+                Live Data
             </h2>
             <div className='bg-stone-200 p-2 rounded-bl-xl rounded-br-xl'>
                 <div className='mb-2'>
@@ -295,17 +296,32 @@ function DataPanel({ config, userId }) {
                         <div className='uppercase text-sm text-slate-600/80'>
                             Earned
                         </div>
-                        {/* sum scores */}
+                        {/* sum scores from all users, kinda ugly lookin code but
+                            that's what it does and works well. 
+                            Nested reduces- goes thru users, sums their score up first, 
+                            then sums all those to get the final result.
+
+                            Might look at calculating this on backend and then just
+                            serving that, but perf cost isn't truly alot here
+                        */}
                         <h3>
                             $
-                            {Object.keys(config.users[userId].scores).reduce(
-                                (acc, cur) => {
+                            {Object.keys(config.users)
+                                .reduce((acc, cur) => {
+                                    console.log(config.users[cur])
                                     return (
-                                        acc + config.users[userId].scores[cur]
+                                        acc +
+                                        Object.keys(
+                                            config.users[cur].scores,
+                                        ).reduce((acc2, cur2) => {
+                                            return (
+                                                acc2 +
+                                                config.users[cur].scores[cur2]
+                                            )
+                                        }, 0)
                                     )
-                                },
-                                0,
-                            )}
+                                }, 0)
+                                .toFixed(2)}
                         </h3>
                     </div>
                 </div>
