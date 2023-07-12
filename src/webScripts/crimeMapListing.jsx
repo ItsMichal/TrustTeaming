@@ -1,4 +1,5 @@
 import React from 'react'
+import { useMemo } from 'react'
 import { createRoot } from 'react-dom/client'
 import { io } from 'socket.io-client'
 import { DateRange } from 'react-date-range'
@@ -160,8 +161,28 @@ function rerenderMapView(start, end, categories) {
     })
 }
 
+//Generate an array of 365 (sometimes 366 ;)) dates
+//that we block off depending on the target date.
+//probably the cleanest solution to block off an entire year
+//from being seen (client-side)
+function blockedYearDates(year) {
+    //strategy: get Jan 1, then increment+push until no longer same year
+    //ref: https://stackoverflow.com/questions/4413590/javascript-get-array-of-dates-between-2-dates
+
+    var dateArr = []
+    var curDate = new Date(year + '-01-01T00:00:00')
+
+    while (curDate.getFullYear() == year) {
+        dateArr.push(curDate)
+        var nextDate = new Date(curDate.valueOf())
+        nextDate.setDate(nextDate.getDate() + 1)
+        curDate = nextDate
+    }
+
+    return dateArr
+}
+
 function DatePicker({ min, max, startEnd, blockedDate, changeCallback }) {
-    console.log(blockedDate)
     const [state, setState] = useState([
         {
             startDate: min,
@@ -169,6 +190,10 @@ function DatePicker({ min, max, startEnd, blockedDate, changeCallback }) {
             key: 'selection',
         },
     ])
+
+    const blockedDates = useMemo(() => {
+        return blockedYearDates(blockedDate.getFullYear())
+    }, [blockedDate])
 
     return (
         <>
@@ -179,7 +204,7 @@ function DatePicker({ min, max, startEnd, blockedDate, changeCallback }) {
                     maxDate={max}
                     shownDate={min}
                     ranges={state}
-                    disabledDates={[blockedDate]}
+                    disabledDates={blockedDates}
                     onChange={item => {
                         setState([item.selection])
                         startGlobal = item.selection.startDate
@@ -196,8 +221,8 @@ function DatePicker({ min, max, startEnd, blockedDate, changeCallback }) {
             </div>
             {blockedDate && (
                 <div className='w-full text-center'>
-                    <b>Warning:</b> {blockedDate.toDateString()} is now
-                    disabled.
+                    <b>Warning:</b> {blockedDate.getFullYear()} dates are now
+                    unavailable.
                 </div>
             )}
         </>
