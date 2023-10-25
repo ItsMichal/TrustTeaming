@@ -177,10 +177,10 @@ function ConfigLive(props) {
                                 }
                             </td>
                         </tr>
-                        <UserTable
+                        {/* <UserTable
                             users={props.liveExperiment.liveCore.users}
                             code={props.code}
-                        />
+                        /> */}
                         <tr className='w-100 text-center border-gray border-b'>
                             <td className='py-2 font-bold'>
                                 Download Logged Results

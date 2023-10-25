@@ -192,7 +192,8 @@ function DatePicker({ min, max, startEnd, blockedDate, changeCallback }) {
     ])
 
     const blockedDates = useMemo(() => {
-        return blockedYearDates(blockedDate.getFullYear())
+        if(blockedDate) return blockedYearDates(blockedDate.getFullYear())
+        return [];
     }, [blockedDate])
 
     return (

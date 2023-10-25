@@ -1,4 +1,5 @@
 import json
+import traceback
 import redis
 
 from rom import util
@@ -75,11 +76,11 @@ class DataManager(object):
             
             newExperimentConfig = ExperimentConfig(code=code, valid_uids=[])
             newExperimentConfig.save(force=True)
+            return newExperimentConfig
         except AttributeError as ater:
             print("Could not create experiment data - AttrError " ,ater)
             raise ater
         except BaseException as err:
-            print(err)
             raise err
     
 
@@ -108,13 +109,15 @@ class DataManager(object):
             getExperimentRelatedToCode = ExperimentConfig.get_by(code=code.encode())
             return getExperimentRelatedToCode
         except BaseException as err:
+            print(code)
+            traceback.print_exc()
             print(err)
             return None
 
-    def getLiveExperimentByCode(self, code) -> LiveExperiment:
+    def getLiveExperimentByCode(self, code, idx=0) -> LiveExperiment:
         try:
             getExperimentRelatedToCode = ExperimentConfig.get_by(code=code.encode())
-            return getExperimentRelatedToCode.liveExperiment
+            return getExperimentRelatedToCode.liveExperiment[idx]
         except BaseException as err:
             print(err)
             return None
@@ -181,9 +184,9 @@ class DataManager(object):
         returnJson = {"liveExperiments":{}}
 
         for exp in all_exp:
-            print(exp)
-            returnJson["liveExperiments"][exp.config.code.decode()] = self.getLiveExperimentJSON(exp.config.code.decode())
-            returnJson["liveExperiments"][exp.config.code.decode()]["liveCore"] = self.getLiveCore(exp.config.code.decode()).getCurLiveData()
+            if(self.getLiveCore(exp.config.code.decode()) is not None):
+                returnJson["liveExperiments"][exp.config.code.decode()] = self.getLiveExperimentJSON(exp.config.code.decode())
+                returnJson["liveExperiments"][exp.config.code.decode()]["liveCore"] = self.getLiveCore(exp.config.code.decode()).getCurLiveData()
         
         print("RETURN JSON", returnJson)
         return returnJson
@@ -191,14 +194,15 @@ class DataManager(object):
 
 
     # Stops an experiment by deleting it
-    # TODO- add save feature once logging implemented
+    # TODO- add savae feature once logging implemented
     def stopExperiment(self, code):
         if code in self.liveCores:
             oldLive = self.liveCores.pop(code)
             del oldLive
 
         target_exp = self.getExperimentByCode(code)
-        target_exp.liveExperiment.delete()
+        for i in range(len(target_exp.liveExperiment)):
+            target_exp.liveExperiment[i].delete()
         target_exp.save(force=True)
 
 
@@ -208,7 +212,7 @@ class DataManager(object):
 
         #Check if exp exists, and stop or abort according to force
         if(target_exp.liveExperiment is not None):
-            if(force):
+            if(True or force):
                 self.stopExperiment(code)
             else:
                 raise Exception("Live experiment already running for this config. Try with force.")

@@ -7,7 +7,7 @@ class Pin(rom.Model):
     message = rom.String(required=True, default=b"")
     code = rom.String(required=True,  index=True, keygen=rom.IDENTITY)
     color = rom.String(required=True, default=b"red")
-    timePlaced = rom.DateTime(required=True, unique=True)
+    timePlaced = rom.DateTime(required=True)
     aiPlaced = rom.Boolean(required=True, default=False)
     userPlaced = rom.String(required=True, default=b"")
     userMoved = rom.String(default=b"")

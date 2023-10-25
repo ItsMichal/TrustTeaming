@@ -9,7 +9,7 @@ from rom.columns import NO_ACTION_DEFAULT
 
 class LiveExperiment(rom.Model):
     timeStarted = rom.DateTime(required=True)
-    config = rom.OneToOne('ExperimentConfig', required=True, on_delete='cascade', unique=True)
+    config = rom.OneToOne('ExperimentConfig', required=True, on_delete='cascade')
     state = rom.String(required=True, default=b"idle")
     timeRoundStarted = rom.DateTime()
     curRoundNum = rom.Integer(required=True, default=1)

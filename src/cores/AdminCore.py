@@ -17,6 +17,7 @@ from util.csvToDataModel import csvToDataModel
 from TrustTeaming import socketio
 from flask_socketio import emit
 
+import traceback
 #FlaskView is actually a controller :)
 class AdminCore(object):
     route_base = '/admin'
@@ -155,6 +156,19 @@ class AdminCore(object):
     def getConfig():
         return DataManager().getExperimentsJSON()
 
+    @socketio.on('updateConfig', namespace=route_base)
+    def updateConfig(req={}):
+        if("code" in req):
+            try:
+                print(req)
+
+                jsonToConfig(req)
+                emit('updateConfigStatus', {"status": "success", "message": "Updated experiment config!"})
+            except BaseException as err:
+                print(err)
+                emit('updateConfigStatus', {"status": "error", "message": str(err)})
+        else:
+            emit('updateConfigStatus',{"status":"invalid", "message":"Invalid request!"})
 
     @socketio.on('sendLive', namespace=route_base)
     def liveRequest(req={}):

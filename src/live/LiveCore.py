@@ -131,7 +131,7 @@ class LiveCore(Namespace):
         }
 
     def emitCurLiveData(self, userid=None):
-        socketio.emit('sharedLiveData', self.getCurLiveData(), broadcast=True, namespace=self.route_base+self.code)
+        socketio.emit('sharedLiveData', self.getCurLiveData(),  namespace=self.route_base+self.code)
 
     def countCurPinColors(self) -> dict:
         colors = {"red": 0, "green": 0}

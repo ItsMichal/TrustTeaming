@@ -1,23 +1,27 @@
 # Takes a json from a request and returns a new data model
+import datetime
 import json
+from data import DataManager
 from dataModels.ExperimentConfig import ExperimentConfig
 from dataModels.RoundConfig import RoundConfig
 from dataModels.ActorInstruction import ActorInstruction
 
 #import datamanager
-from data import DataManager
+from dateutil import parser
 
 
 def jsonToRounds(experiment_config, rounds : list):
         for round in rounds:
-            DataManager.createRoundConfig(
+            date = parser.parse(round['targetDate'])
+            
+            DataManager().createRoundConfig(
                 user_id=round['userId'],
-                code=experiment_config.code,
+                code=experiment_config.code.decode(),
                 round_id=round['roundId'],
                 layers=round['layers'],
                 question=round['question'],
-                time=round['time'],
-                target_date=round['targetDate'],
+                time=int(round['time']),
+                target_date=date,
                 max_red=round['maxRed'],
                 max_green=round['maxGreen'],
                 survey_link=round['surveyLink'],

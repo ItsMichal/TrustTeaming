@@ -2,9 +2,9 @@
 // as well as download the config as a csv. Also allows the user to directly edit a live config.
 
 import React, { useEffect } from 'react'
-import ReactDOM from 'react-dom'
+// import ReactDOM from 'react-dom'
 import { io } from 'socket.io-client'
-import { DateRange } from 'react-date-range'
+// import { DateRange } from 'react-date-range'
 import { useState } from 'react'
 import 'react-date-range/dist/styles.css' // main style file
 import '../assets/css/cal.css' // theme css file
@@ -44,7 +44,7 @@ function CollapsiblePanel({ title, children, open }) {
                     setOpen(!isOpen)
                 }}
             >
-                {isOpen ? '▼' : '▶'}
+                {isOpen ? '▼' : '>>'}
             </button>
             <div className='w-full bg-stone-300/30 rounded-lg border border-stone-300/50 shadow-inner'>
                 {/* Title */}
@@ -209,11 +209,15 @@ export function ConfigPanel({ config }) {
 
         if (roundId > rounds.length) {
             //add new round for each user
-            workingConfig.valid_uids.forEach(uid => {
+            // workingConfig.valid_uids.forEach(uid => {
                 let userConfig = { ...newRoundConfig }
-                userConfig.userId = uid
+                userConfig.userId = 1
                 newRounds.push(userConfig)
-            })
+                let userConfig2 = { ...newRoundConfig }
+                userConfig2.userId = 2
+                newRounds.push(userConfig)
+            // })
+            
         }
 
         let updatedConfig = { ...workingConfig }
@@ -245,13 +249,20 @@ export function ConfigPanel({ config }) {
             }
         })
 
+        //sort rounds by roundId
+        collapsedRounds = collapsedRounds.sort((a,b)=>{
+            return a.roundId-b.roundId;
+        })
+
+        console.log("HUM", collapsedRounds);
+
         return collapsedRounds
     }
 
     function updateWorkingConfig(newConfig) {
         setWorkingConfig(newConfig)
         setRounds(collapseRounds(newConfig))
-        console.log(rounds)
+        console.log(newConfig)
         setActorInstructions(
             splitInstructionsByRound(newConfig.actorInstructions),
         )
@@ -287,7 +298,6 @@ export function ConfigPanel({ config }) {
                     {changesMade && (
                         <button
                             className='bg-stone-300 text-white text-sm rounded-lg px-2 py-1 mx-2 '
-                            disabled
                             onClick={e => {
                                 e.stopPropagation()
                                 socket.emit('updateConfig', workingConfig)
